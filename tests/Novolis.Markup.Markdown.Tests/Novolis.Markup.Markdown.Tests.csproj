@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>Novolis.Markup.Markdown.Tests</RootNamespace>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="JetBrains.Annotations" />
+    <PackageReference Include="TUnit" />
+    <ProjectReference Include="..\..\src\Novolis.Markup.Markdown\Novolis.Markup.Markdown.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Novolis.Markup.Mermaid</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>Novolis.Markup.Mermaid</RootNamespace>
+    <Description>Fluent Mermaid diagram syntax builder for .NET (flowchart, pie, timeline, git graph, and more).</Description>
+    <PackageTags>mermaid;diagram;flowchart;fluent;csharp;dotnet</PackageTags>
+  </PropertyGroup>
+</Project>

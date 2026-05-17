@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj" />
+    <Project Path="src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Novolis.Markup.Markdown.Tests/Novolis.Markup.Markdown.Tests.csproj" />
+    <Project Path="tests/Novolis.Markup.Mermaid.Tests/Novolis.Markup.Mermaid.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <RootNamespace>Novolis.Markup.Mermaid.Tests</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="TUnit" />
+    <ProjectReference Include="..\..\src\Novolis.Markup.Mermaid\Novolis.Markup.Mermaid.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,26 @@
+{
+  "packages": {
+    "Novolis.Markup.Markdown": {
+      "project": "src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj",
+      "paths": [
+        "src/Novolis.Markup.Markdown/**",
+        "tests/Novolis.Markup.Markdown.Tests/**",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "Novolis.Markup.slnx"
+      ]
+    },
+    "Novolis.Markup.Mermaid": {
+      "project": "src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj",
+      "paths": [
+        "src/Novolis.Markup.Mermaid/**",
+        "tests/Novolis.Markup.Mermaid.Tests/**",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "Novolis.Markup.slnx"
+      ]
+    }
+  }
+}
