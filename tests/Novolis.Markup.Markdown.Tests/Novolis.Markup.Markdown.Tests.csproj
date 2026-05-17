@@ -6,7 +6,6 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="TUnit" />
     <ProjectReference Include="..\..\src\Novolis.Markup.Markdown\Novolis.Markup.Markdown.csproj" />

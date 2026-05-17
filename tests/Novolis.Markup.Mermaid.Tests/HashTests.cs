@@ -5,53 +5,53 @@ namespace Novolis.Markup.Mermaid.Tests;
 public class HashTests
 {
     [Test]
-    public void GenerateHash_WithZeroTicksDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithZeroTicksDateTime_ReturnsValidBase36Hash()
     {
         DateTime dateTime = new DateTime(0L, DateTimeKind.Utc);
         var hash = new Hash(dateTime);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateHash_WithCurrentDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithCurrentDateTime_ReturnsValidBase36Hash()
     {
         DateTime dateTime = DateTime.UtcNow;
         var hash = new Hash(dateTime);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateHash_WithSpecificDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithSpecificDateTime_ReturnsValidBase36Hash()
     {
         DateTime dateTime = new DateTime(2022, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         var hash = new Hash(dateTime);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateHash_WithMaxDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithMaxDateTime_ReturnsValidBase36Hash()
     {
         var hash = new Hash(DateTime.MaxValue);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateHash_WithMinDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithMinDateTime_ReturnsValidBase36Hash()
     {
         var hash = new Hash(DateTime.MinValue);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateHash_WithNullDateTime_ReturnsValidBase36Hash()
+    public async Task GenerateHash_WithNullDateTime_ReturnsValidBase36Hash()
     {
         DateTime? dateTime = null;
         var hash = new Hash(dateTime);
-        hash.ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(hash.ToString()).IsNotNullOrWhiteSpace();
     }
 
     [Test]
-    public void GenerateMultipleHashes_SortsByDateTime()
+    public async Task GenerateMultipleHashes_SortsByDateTime()
     {
         var hashes = new List<Hash>
         {
@@ -79,9 +79,9 @@ public class HashTests
         {
             var hashResult = result[index];
             var hashSource = hashes[index].ToString();
-            Assert.Equal(hashSource, hashResult);
+            await Assert.That(hashResult).IsEqualTo(hashSource);
         }
 
-        Assert.Equal(hashes.Count, result.Count);
+        await Assert.That(result.Count).IsEqualTo(hashes.Count);
     }
 }

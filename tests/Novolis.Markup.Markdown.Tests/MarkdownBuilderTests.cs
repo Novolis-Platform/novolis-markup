@@ -12,14 +12,14 @@ public class MarkdownDocumentTests
 {
 
     [Test]
-    public void CreateFromString_Should_Return_MarkdownDocument()
+    public async Task CreateFromString_Should_Return_MarkdownDocument()
     {
         var doc = MarkdownDocument.Create("# Example", "Examples is my thing.");
-        Assert.Equal("# Example\n\nExamples is my thing.\n\n", doc.ToString());
+        await Assert.That(doc.ToString()).IsEqualTo("# Example\n\nExamples is my thing.\n\n");
     }
 
     [Test]
-    public void Append_AddSection_ReturnsSelf()
+    public async Task Append_AddSection_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -29,11 +29,11 @@ public class MarkdownDocumentTests
         var result = builder.With(section);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
 
     [Test]
-    public void Append_AddSection_AppendInSectionList()
+    public async Task Append_AddSection_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -45,11 +45,11 @@ public class MarkdownDocumentTests
         builder.With(section2);
         
         // Assert
-        Assert.Equal("# Header\n\n## Header\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("# Header\n\n## Header\n\n");
     }
 
     [Test]
-    public void ToString_NoSections_ReturnsEmpty()
+    public async Task ToString_NoSections_ReturnsEmpty()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -57,11 +57,11 @@ public class MarkdownDocumentTests
         // Act
         
         // Assert
-        Assert.Equal("\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("\n");
     }
 
     [Test]
-    public void ToString_SingleSection_ReturnsSectionString()
+    public async Task ToString_SingleSection_ReturnsSectionString()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -71,11 +71,11 @@ public class MarkdownDocumentTests
         builder.With(section);
         
         // Assert
-        Assert.Equal("# Header\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("# Header\n\n");
     }
 
     [Test]
-    public void ToString_MultipleSections_ReturnsAllSectionStrings()
+    public async Task ToString_MultipleSections_ReturnsAllSectionStrings()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -87,11 +87,11 @@ public class MarkdownDocumentTests
         builder.With(section2);
         
         // Assert
-        Assert.Equal("# Header\n\n## Header\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("# Header\n\n## Header\n\n");
     }
     
     [Test]
-    public void WithOrderedList_AddItems_ReturnsSelf()
+    public async Task WithOrderedList_AddItems_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -102,11 +102,11 @@ public class MarkdownDocumentTests
         var result = builder.WithOrderedList(orderedList);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithOrderedList_AddItems_AppendInSectionList()
+    public async Task WithOrderedList_AddItems_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -117,11 +117,11 @@ public class MarkdownDocumentTests
         builder.WithOrderedList(orderedList);
         
         // Assert
-        Assert.Equal("1. Item 1\n2. Item 2\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("1. Item 1\n2. Item 2\n\n");
     }
     
     [Test]
-    public void WithOrderedList_AddItemsWithStyle_AppendInSectionList()
+    public async Task WithOrderedList_AddItemsWithStyle_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -132,11 +132,11 @@ public class MarkdownDocumentTests
         builder.WithOrderedList(orderedList);
         
         // Assert
-        Assert.Equal("a. Item 1\nb. Item 2\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("a. Item 1\nb. Item 2\n\n");
     }
     
     [Test]
-    public void WithUnorderedList_AddItems_ReturnsSelf()
+    public async Task WithUnorderedList_AddItems_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -147,11 +147,11 @@ public class MarkdownDocumentTests
         var result = builder.WithUnorderedList(unorderedList);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithUnorderedList_AddItems_AppendInSectionList()
+    public async Task WithUnorderedList_AddItems_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -162,11 +162,11 @@ public class MarkdownDocumentTests
         builder.WithUnorderedList(unorderedList);
         
         // Assert
-        Assert.Equal("- Item 1\n- Item 2\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("- Item 1\n- Item 2\n\n");
     }
     
     [Test]
-    public void WithCodeBlock_AddCodeBlock_ReturnsSelf()
+    public async Task WithCodeBlock_AddCodeBlock_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -176,11 +176,11 @@ public class MarkdownDocumentTests
         var result = builder.WithCodeBlock(codeBlock);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithCodeBlock_AddCodeBlock_AppendInSectionList()
+    public async Task WithCodeBlock_AddCodeBlock_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -190,11 +190,11 @@ public class MarkdownDocumentTests
         builder.WithCodeBlock(codeBlock);
         
         // Assert
-        Assert.Equal("```\nvar x = 1;\n```\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("```\nvar x = 1;\n```\n\n");
     }
     
     [Test]
-    public void WithCodeBlock_AddCodeBlockWithLanguage_AppendInSectionList()
+    public async Task WithCodeBlock_AddCodeBlockWithLanguage_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -204,11 +204,11 @@ public class MarkdownDocumentTests
         builder.WithCodeBlock(codeBlock);
         
         // Assert
-        Assert.Equal("```csharp\nvar x = 1;\n```\n\n", builder.ToString());
+        await Assert.That(builder.ToString()).IsEqualTo("```csharp\nvar x = 1;\n```\n\n");
     }
     
     [Test]
-    public void WithTable_AddTable_ReturnsSelf()
+    public async Task WithTable_AddTable_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -222,11 +222,11 @@ public class MarkdownDocumentTests
         var result = builder.WithTable(table);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithTable_AddTable_AppendInSectionList()
+    public async Task WithTable_AddTable_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -241,11 +241,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n", result, StringComparer.InvariantCulture);
+        await Assert.That(StringComparer.InvariantCulture.Equals("| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n", result)).IsTrue();
     }
     
     [Test]
-    public void WithAlert_AddAlert_ReturnsSelf()
+    public async Task WithAlert_AddAlert_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -255,11 +255,11 @@ public class MarkdownDocumentTests
         var result = builder.WithAlert(alert);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithAlert_AddAlert_AppendInSectionList()
+    public async Task WithAlert_AddAlert_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -270,11 +270,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n", result);
+        await Assert.That(result).IsEqualTo("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n");
     }
     
     [Test]
-    public void WithAlert_AddAlertWithMultipleLines_AppendInSectionList()
+    public async Task WithAlert_AddAlertWithMultipleLines_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -285,11 +285,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n> This is a second line.\n\n", result);
+        await Assert.That(result).IsEqualTo("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n> This is a second line.\n\n");
     }
     
     [Test]
-    public void WithAlert_AddAlertWithMultipleLinesAndLeadingSpaces_AppendInSectionList()
+    public async Task WithAlert_AddAlertWithMultipleLinesAndLeadingSpaces_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -300,11 +300,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n>   This is a second line.\n\n", result);
+        await Assert.That(result).IsEqualTo("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n>   This is a second line.\n\n");
     }
     
     [Test]
-    public void WithAlert_AddAlertWithMultipleLinesAndLeadingSpacesAndLeadingGreaterThanSigns_AppendInSectionList()
+    public async Task WithAlert_AddAlertWithMultipleLinesAndLeadingSpacesAndLeadingGreaterThanSigns_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -315,11 +315,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n>   This is a second line.\n\n", result);
+        await Assert.That(result).IsEqualTo("> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n> \n>   This is a second line.\n\n");
     }
     
     [Test]
-    public void WithParagraph_AddParagraph_ReturnsSelf()
+    public async Task WithParagraph_AddParagraph_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -329,11 +329,11 @@ public class MarkdownDocumentTests
         var result = builder.WithParagraph(paragraph);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithParagraph_AddParagraph_AppendInSectionList()
+    public async Task WithParagraph_AddParagraph_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -344,11 +344,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("This is a paragraph.\n\n", result);
+        await Assert.That(result).IsEqualTo("This is a paragraph.\n\n");
     }
     
     [Test]
-    public void WithParagraph_AddParagraphUsingParagraphBuilder_ReturnsSelf()
+    public async Task WithParagraph_AddParagraphUsingParagraphBuilder_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -362,11 +362,11 @@ public class MarkdownDocumentTests
         var result = builder.WithParagraph(paragraph);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithParagraph_AddParagraphUsingParagraphBuilder_MultipleLiteraryParagraphs()
+    public async Task WithParagraph_AddParagraphUsingParagraphBuilder_MultipleLiteraryParagraphs()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -382,11 +382,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("This is the beginning of the paragraph. It has a very exciting time.\n    'Twas brillig, and the slithy toves' said the Jabberwock. He was very excited to see the toves.\n\n", result);
+        await Assert.That(result).IsEqualTo("This is the beginning of the paragraph. It has a very exciting time.\n    'Twas brillig, and the slithy toves' said the Jabberwock. He was very excited to see the toves.\n\n");
     }
     
     [Test]
-    public void WithEverything_AddAllSections_ReturnsSelf()
+    public async Task WithEverything_AddAllSections_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -414,11 +414,11 @@ public class MarkdownDocumentTests
             .WithAlert(alert);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithEverything_AddAllSections_AppendInSectionList()
+    public async Task WithEverything_AddAllSections_AppendInSectionList()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -447,11 +447,11 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("# Header\n\n## Header\n\n1. Item 1\n2. Item 2\n\n- Item 1\n- Item 2\n\n```\nvar x = 1;\n```\n\n| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n", result);
+        await Assert.That(result).IsEqualTo("# Header\n\n## Header\n\n1. Item 1\n2. Item 2\n\n- Item 1\n- Item 2\n\n```\nvar x = 1;\n```\n\n| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n");
     }
     
     [Test]
-    public void WithEverything_AddAllSectionsUsingParagraphBuilder_ReturnsSelf()
+    public async Task WithEverything_AddAllSectionsUsingParagraphBuilder_ReturnsSelf()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -485,11 +485,11 @@ public class MarkdownDocumentTests
             .WithAlert(alert);
         
         // Assert
-        Assert.Equal(builder, result);
+        await Assert.That(result).IsEqualTo(builder);
     }
     
     [Test]
-    public void WithEverything_AddAllSectionsUsingParagraphBuilder_MultipleLiteraryParagraphs()
+    public async Task WithEverything_AddAllSectionsUsingParagraphBuilder_MultipleLiteraryParagraphs()
     {
         // Arrange
         var builder = new MarkdownDocument();
@@ -525,8 +525,7 @@ public class MarkdownDocumentTests
         var result = builder.ToString();
         
         // Assert
-        Assert.Equal("# Header\n\n## Header\n\nThis is the beginning of the paragraph. It has a very exciting time.\n    'Twas brillig, and the slithy toves' said the Jabberwock. He was very excited to see the toves.\n\n1. Item 1\n2. Item 2\n\n- Item 1\n- Item 2\n\n```\nvar x = 1;\n```\n\n| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n",
-            result);
+        await Assert.That(result).IsEqualTo("# Header\n\n## Header\n\nThis is the beginning of the paragraph. It has a very exciting time.\n    'Twas brillig, and the slithy toves' said the Jabberwock. He was very excited to see the toves.\n\n1. Item 1\n2. Item 2\n\n- Item 1\n- Item 2\n\n```\nvar x = 1;\n```\n\n| Name | Value | Vector | Version |\n| --- | --- | --- | --- |\n| Name 1 | 1 | <1, 2> | 1.2.3 |\n| Name 2 | 2 | <3, 4> | 4.5.6 |\n\n> [!WARNING]\n> Urgent info that needs immediate user attention to avoid problems.\n\n");
     }
 
     private class MarkdownTableTestRow
@@ -541,7 +540,7 @@ public class MarkdownDocumentTests
     }
 
     [Test]
-    public void Constructor_Should_Initialize_Sections_Correctly()
+    public async Task Constructor_Should_Initialize_Sections_Correctly()
     {
         IMarkdownSection[] sections = { new MarkdownSectionExample(), new MarkdownSectionExample() };
         var doc = new MarkdownDocument();
@@ -549,11 +548,11 @@ public class MarkdownDocumentTests
         {
             doc.With(section);
         }
-        Assert.Equal("Example\nExample\n", doc.ToString());
+        await Assert.That(doc.ToString()).IsEqualTo("Example\nExample\n");
     }
 
     [Test]
-    public void Markdown_Should_Return_Markdown_String()
+    public async Task Markdown_Should_Return_Markdown_String()
     {
         IMarkdownSection[] sections = { new MarkdownSectionExample(), new MarkdownSectionExample() };
         var doc = new MarkdownDocument();
@@ -561,20 +560,20 @@ public class MarkdownDocumentTests
         {
             doc.With(section);
         }
-        Assert.Equal("Example\nExample\n", doc.ToString());
+        await Assert.That(doc.ToString()).IsEqualTo("Example\nExample\n");
     }
 
     [Test]
-    public void ToString_Should_Return_Markdown_String()
+    public async Task ToString_Should_Return_Markdown_String()
     {
         IMarkdownSection[] sections = { new MarkdownSectionExample(), new MarkdownSectionExample() };
         var doc = new MarkdownDocument();
         doc.With(sections);
-        Assert.Equal("Example\nExample\n", doc.ToString());
+        await Assert.That(doc.ToString()).IsEqualTo("Example\nExample\n");
     }
 
     [Test]
-    public void GetEnumerator_Should_Return_Enumerator_Over_Sections()
+    public async Task GetEnumerator_Should_Return_Enumerator_Over_Sections()
     {
         IMarkdownSection[] sections = { new MarkdownSectionExample(), new MarkdownSectionExample() };
         var doc = new MarkdownDocument()
@@ -582,11 +581,11 @@ public class MarkdownDocumentTests
             .With(sections[1]);
         IEnumerator enumerator = ((IEnumerable)doc).GetEnumerator();
         using var unknown = enumerator as IDisposable;
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(enumerator.Current, sections[0]);
-        Assert.True(enumerator.MoveNext());
-        Assert.Equal(enumerator.Current, sections[1]);
-        Assert.False(enumerator.MoveNext());
+        await Assert.That(enumerator.MoveNext()).IsTrue();
+        await Assert.That(enumerator.Current).IsSameReferenceAs(sections[0]);
+        await Assert.That(enumerator.MoveNext()).IsTrue();
+        await Assert.That(enumerator.Current).IsSameReferenceAs(sections[1]);
+        await Assert.That(enumerator.MoveNext()).IsFalse();
     }
 }
 

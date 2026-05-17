@@ -3,7 +3,7 @@ namespace Novolis.Markup.Mermaid.Tests;
 public class PieChartTests
 {
     [Test]
-    public void Test1()
+    public async Task Test1()
     {
         var chart = new PieChart("Chart 1");
         chart.AddValue("Slice 1", 10);
@@ -15,7 +15,7 @@ public class PieChartTests
     }
     
     [Test]
-    public void Test2()
+    public async Task Test2()
     {
         var chart = new PieChart("Chart 1", false);
         chart.AddValue("Slice 1", 10);
@@ -27,7 +27,7 @@ public class PieChartTests
     }
     
     [Test]
-    public void Test3()
+    public async Task Test3()
     {
         var mermaidPieChart = new PieChart("MyPieChart");
         mermaidPieChart.AddValue("A", 999);
@@ -35,6 +35,6 @@ public class PieChartTests
         mermaidPieChart.AddValue("C", 420);
         mermaidPieChart.AddValue("D", 69);
 
-        mermaidPieChart.GetBuilder().ToString().Should().NotBeNullOrEmpty();
+        await Assert.That(mermaidPieChart.GetBuilder().ToString()).IsNotNullOrWhiteSpace();
     }
 }

@@ -3,7 +3,7 @@ namespace Novolis.Markup.Mermaid.Tests;
 public class XyChartTests
 {
     [Test]
-    public void Test1()
+    public async Task Test1()
     {
         var chart = new XyChart("Chart 1");
         var series1 = new Series("Series 1");

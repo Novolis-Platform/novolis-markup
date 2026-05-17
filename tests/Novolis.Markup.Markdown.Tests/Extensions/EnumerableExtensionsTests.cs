@@ -26,46 +26,46 @@ public class EnumerableExtensionsTests
     }
 
     [Test]
-    public void TestToMarkdownTableSimple()
+    public async Task TestToMarkdownTableSimple()
     {
         var items = new List<TestTypeSimple> { new TestTypeSimple { IntNumber = 1, StrValue = "test", GuidValue = Guid.NewGuid(), Date = DateTime.Now }, new TestTypeSimple { IntNumber = 2, StrValue = "example", GuidValue = Guid.NewGuid(), Date = DateTime.Now } };
 
         var markdownTable = items.ToMarkdownTable();
 
-        Assert.NotNull(markdownTable);
-        Assert.Contains("IntNumber | StrValue | GuidValue | Date", markdownTable);
-        Assert.Contains("---", markdownTable);
+        await Assert.That(markdownTable).IsNotNull();
+        await Assert.That(markdownTable).Contains("IntNumber | StrValue | GuidValue | Date");
+        await Assert.That(markdownTable).Contains("---");
     }
 
     [Test]
-    public void TestToMarkdownTableComplex()
+    public async Task TestToMarkdownTableComplex()
     {
         var items = new List<TestTypeComplex> { new TestTypeComplex { IntNumber = 1, StrValue = "test", SubObject = new TestTypeSimple() }, new TestTypeComplex { IntNumber = 2, StrValue = "example", SubObject = new TestTypeSimple() } };
 
         var markdownTable = items.ToMarkdownTable();
 
-        Assert.NotNull(markdownTable);
-        Assert.Contains("IntNumber | StrValue | SubObject", markdownTable);
-        Assert.Contains("---", markdownTable);
+        await Assert.That(markdownTable).IsNotNull();
+        await Assert.That(markdownTable).Contains("IntNumber | StrValue | SubObject");
+        await Assert.That(markdownTable).Contains("---");
     }
 
     [Test]
-    public void TestToMarkdownTableEmptyList()
+    public async Task TestToMarkdownTableEmptyList()
     {
         var items = new List<TestTypeSimple>();
 
         var markdownTable = items.ToMarkdownTable();
 
-        Assert.NotNull(markdownTable);
-        Assert.Contains("| IntNumber | StrValue | GuidValue | Date |", markdownTable);
-        Assert.Contains("| --- | --- | --- | --- |", markdownTable);
+        await Assert.That(markdownTable).IsNotNull();
+        await Assert.That(markdownTable).Contains("| IntNumber | StrValue | GuidValue | Date |");
+        await Assert.That(markdownTable).Contains("| --- | --- | --- | --- |");
     }
 
     [Test]
-    public void TestToMarkdownTableNullList()
+    public async Task TestToMarkdownTableNullList()
     {
         List<TestTypeSimple> items = null;
 
-        Assert.Throws<ArgumentNullException>(() => items.ToMarkdownTable());
+        await Assert.That(() => items.ToMarkdownTable()).Throws<ArgumentNullException>();
     }
 }

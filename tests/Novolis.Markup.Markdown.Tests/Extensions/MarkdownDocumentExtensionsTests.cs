@@ -8,7 +8,7 @@ namespace Novolis.Markup.Markdown.Tests.Extensions
     {
     
         [Test]
-        public void ToHtml()
+        public async Task ToHtml()
         {
             // Arrange
             var markdownBuilder = new MarkdownDocument()

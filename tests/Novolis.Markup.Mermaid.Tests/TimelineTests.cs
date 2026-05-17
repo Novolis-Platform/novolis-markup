@@ -3,7 +3,7 @@ namespace Novolis.Markup.Mermaid.Tests;
 public class TimelineTests
 {
     [Test]
-    public void Test1()
+    public async Task Test1()
     {
         var timeline = new Timeline("My Timeline");
         var section1 = new Section("Section 1");
@@ -26,7 +26,7 @@ public class TimelineTests
     }
     
     [Test]
-    public void Test2_NorwaysHistorySinceTheVikingAge()
+    public async Task Test2_NorwaysHistorySinceTheVikingAge()
     {
         var timeline = new Timeline("Norway's Historical Timeline");
 

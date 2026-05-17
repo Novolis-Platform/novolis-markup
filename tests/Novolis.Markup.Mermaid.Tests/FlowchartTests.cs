@@ -3,7 +3,7 @@ namespace Novolis.Markup.Mermaid.Tests;
 public class FlowchartTests
 {
     [Test]
-    public void Test1()
+    public async Task Test1()
     {
         var flowchart = new Flowchart(Direction.LeftToRight);
         var node1 = new Node("Node 1");
@@ -33,7 +33,7 @@ public class FlowchartTests
     }
     
     [Test]
-    public void Test2()
+    public async Task Test2()
     {
         var flowchart = new Flowchart();
         
@@ -68,7 +68,7 @@ public class FlowchartTests
     }
     
     [Test]
-    public void Test3_SuperComplexFlowOfSomeonesBiggestChoicesInLife()
+    public async Task Test3_SuperComplexFlowOfSomeonesBiggestChoicesInLife()
     {
         var flowchart = new Flowchart();
 
@@ -127,7 +127,7 @@ public class FlowchartTests
     }
 
     [Test]
-    public void Test4_AbeLincoln()
+    public async Task Test4_AbeLincoln()
     {
         var flowchart = new Flowchart();
 
@@ -192,7 +192,7 @@ public class FlowchartTests
     }
     
     [Test]
-    public void Test5_ProblemSolvingFlowchart()
+    public async Task Test5_ProblemSolvingFlowchart()
     {
         var flowchart = new Flowchart();
 
