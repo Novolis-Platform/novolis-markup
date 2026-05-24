@@ -4,7 +4,6 @@
     <Project Path="src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Novolis.Markup.Markdown.Tests/Novolis.Markup.Markdown.Tests.csproj" />
-    <Project Path="tests/Novolis.Markup.Mermaid.Tests/Novolis.Markup.Mermaid.Tests.csproj" />
-  </Folder>
+    <Project Path="tests/Novolis.Markup.Unit/Novolis.Markup.Unit.csproj" />
+    </Folder>
 </Solution>

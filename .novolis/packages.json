@@ -4,7 +4,7 @@
       "project": "src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj",
       "paths": [
         "src/Novolis.Markup.Markdown/**",
-        "tests/Novolis.Markup.Markdown.Tests/**",
+        "tests/Novolis.Markup.Unit/Markdown/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "global.json",
@@ -15,7 +15,7 @@
       "project": "src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj",
       "paths": [
         "src/Novolis.Markup.Mermaid/**",
-        "tests/Novolis.Markup.Mermaid.Tests/**",
+        "tests/Novolis.Markup.Unit/Mermaid/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "global.json",

@@ -1,13 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RootNamespace>Novolis.Markup.Unit</RootNamespace>
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <RootNamespace>Novolis.Markup.Markdown.Tests</RootNamespace>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="TUnit" />
-    <ProjectReference Include="..\..\src\Novolis.Markup.Markdown\Novolis.Markup.Markdown.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj" />
+    <ProjectReference Include="../../src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
   </ItemGroup>
 </Project>
