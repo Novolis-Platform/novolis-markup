@@ -1,18 +1,26 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Flowchart.</summary>
 public class Flowchart(Direction direction = Direction.TopToBottom) : IMermaidable
 {
     private readonly List<Node> _nodes = new();
     private readonly List<Link> _links = new();
+    /// <summary>Adds an item.</summary>
     private readonly List<Subgraph> _subgraphs = new();
 
+    /// <summary>Adds an item.</summary>
     public void AddSubgraph(Subgraph subgraph) => _subgraphs.Add(subgraph);
+    /// <summary>Adds an item.</summary>
     public void AddSubgraphs(IEnumerable<Subgraph> subgraphs) => _subgraphs.AddRange(subgraphs);
+    /// <summary>Adds an item.</summary>
     
     public void AddNode(Node node) => _nodes.Add(node);
+    /// <summary>Adds an item.</summary>
     public void AddNodes(IEnumerable<Node> nodes) => _nodes.AddRange(nodes);
+    /// <summary>Adds an item.</summary>
     
     public void AddLink(Link link) => _links.Add(link);
+    /// <summary>Adds an item.</summary>
     public void AddLinks(IEnumerable<Link> links) => _links.AddRange(links);
 
     /// <inheritdoc />

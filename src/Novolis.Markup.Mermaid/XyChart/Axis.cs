@@ -1,8 +1,11 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Axis.</summary>
 public class Axis(string xAxis, bool logarithmic = false) : IMermaidable
 {
+    /// <summary>Title.</summary>
     public string Title { get; } = xAxis;
+/// <summary>Logarithmic.</summary>
 
     public bool Logarithmic { get; } = logarithmic;
 

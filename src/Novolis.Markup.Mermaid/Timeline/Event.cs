@@ -1,11 +1,14 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Event.</summary>
 public class Event(string title, DateTime date, TimePeriod timePeriod = TimePeriod.Day) : IMermaidable
 {
+    /// <summary>TimePeriod.</summary>
     public readonly TimePeriod TimePeriod = timePeriod;
 
     /// <inheritdoc />
     public Hash Id { get; } = Hash.NewHash();
+    /// <summary>Gets Builder</summary>
     
     public IIndentedStringBuilder GetBuilder()
     {

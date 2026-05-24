@@ -1,6 +1,7 @@
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Represents IMarkdownDocument.</summary>
 public interface IMarkdownDocument : IEnumerable<IMarkdownSection>
 {
     /// <summary>

@@ -1,8 +1,11 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Series.</summary>
 public class Series(string name) : IMermaidable
 {
+    /// <summary>Name.</summary>
     public string Name { get; } = name;
+    /// <summary>Points.</summary>
     public List<Point> Points { get; } = new();
 
     /// <inheritdoc />

@@ -1,24 +1,29 @@
 namespace Novolis.Markup.Mermaid;
 
-/// <summary>
-/// Represents an XY chart.
-/// </summary>
 /// <remarks>Beta</remarks>
 public class XyChart(string? title) : IMermaidable
 {
+    /// <summary>Title.</summary>
     public string? Title { get; } = title;
+    /// <summary>YAxis.</summary>
     public Axis XAxis { get; private set; } = null!;
+    /// <summary>Series.</summary>
     public Axis YAxis { get; private set; } = null!;
+    /// <summary>Series.</summary>
     public List<Series> Series { get; } = new();
 
     /// <inheritdoc />
     public Hash Id { get; } = Hash.NewHash();
     
+    /// <summary>Adds an item.</summary>
     public void AddSeries(Series series) => Series.Add(series);
+/// <summary>Sets a value.</summary>
 
     public void AddSeries(IEnumerable<Series> series) => Series.AddRange(series);
     
+    /// <summary>Sets a value.</summary>
     public void SetXAxis(Axis axis) => XAxis = axis;
+    /// <summary>Sets a value.</summary>
     
     public void SetYAxis(Axis axis) => YAxis = axis;
     

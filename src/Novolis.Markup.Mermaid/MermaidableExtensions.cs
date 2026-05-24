@@ -1,5 +1,6 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents MermaidableExtensions.</summary>
 public static class MermaidableExtensions
 {
     /// <summary>

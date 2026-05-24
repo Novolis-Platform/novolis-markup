@@ -1,6 +1,7 @@
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Represents MarkdownTableExtensions.</summary>
 public static class MarkdownTableExtensions
 {
     /// <summary>

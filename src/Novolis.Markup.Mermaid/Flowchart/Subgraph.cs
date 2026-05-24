@@ -1,23 +1,33 @@
 namespace Novolis.Markup.Mermaid;
 // Define the line styles using an enumeration
 
+/// <summary>Represents Subgraph.</summary>
 public class Subgraph(string label, Direction direction) : IMermaidable
 {
+    /// <summary>Adds an item.</summary>
     public void AddNode(Node node) => Nodes.Add(node);
+    /// <summary>Adds an item.</summary>
     public void AddNodes(IEnumerable<Node> nodes) => Nodes.AddRange(nodes);
+/// <summary>Adds an item.</summary>
 
     public void AddLink(Link link) => Links.Add(link);
+    /// <summary>Adds an item.</summary>
     public void AddLinks(IEnumerable<Link> links) => Links.AddRange(links);
+/// <summary>Adds an item.</summary>
 
     public void AddSubgraph(Subgraph subgraph) => _subgraphs.Add(subgraph);
+    /// <summary>Label.</summary>
     public void AddSubgraphs(IEnumerable<Subgraph> subgraphs) => _subgraphs.AddRange(subgraphs);
 
     /// <inheritdoc />
     public Hash Id { get; } = Hash.NewHash();
     
+    /// <summary>Direction.</summary>
     public string Label { get; } = label.CleanNonAlphanumeric();
+/// <summary>Nodes.</summary>
 
     public Direction Direction { get; } = direction;
+/// <summary>Nodes.</summary>
 
     public List<Node> Nodes { get; } = new();
     

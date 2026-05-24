@@ -1,11 +1,12 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents CommitType.</summary>
 public enum CommitType
 {
-    /// <summary>Default commit type. Represented by a solid circle in the diagram</summary>
+    /// <summary>Normal.</summary>
     Normal,
-    /// <summary>To emphasize a commit as a reverse commit. Represented by a crossed solid circle in the diagram</summary>
+    /// <summary>Highlight.</summary>
     Reverse,
-    /// <summary>To highlight a particular commit in the diagram. Represented by a filled rectangle in the diagram</summary>
+    /// <summary>Highlight.</summary>
     Highlight
 }

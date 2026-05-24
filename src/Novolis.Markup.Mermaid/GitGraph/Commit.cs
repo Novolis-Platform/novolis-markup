@@ -1,7 +1,9 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Commit.</summary>
 public class Commit : IMermaidable
 {
+    /// <summary>Commit operation.</summary>
     public Commit(string message, string branch, DateTime? dateTime = null)
     {
         if (dateTime.HasValue)
@@ -11,8 +13,10 @@ public class Commit : IMermaidable
         Message = message;
         Branch = branch;
     }
+    /// <summary>Message.</summary>
     
     public string Message { get; }
+    /// <summary>Branch.</summary>
     public string Branch { get; }
     
     /// <inheritdoc />

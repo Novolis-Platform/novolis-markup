@@ -1,5 +1,6 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents IMermaidable.</summary>
 public interface IMermaidable
 {
     /// <summary>

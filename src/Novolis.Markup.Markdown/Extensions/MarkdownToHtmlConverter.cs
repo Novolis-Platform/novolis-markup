@@ -3,8 +3,10 @@ using System.Text;
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Represents MarkdownToHtmlConverter.</summary>
 public static class MarkdownToHtmlConverter
 {
+    /// <summary>Convert operation.</summary>
     public static string Convert(IMarkdownDocument document)
     {
         var builder = new StringBuilder();

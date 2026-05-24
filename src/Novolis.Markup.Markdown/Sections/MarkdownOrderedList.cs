@@ -1,12 +1,15 @@
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Represents MarkdownOrderedList.</summary>
 public class MarkdownOrderedList(IEnumerable<string> items, MarkdownOrderedListStyle style = MarkdownOrderedListStyle.Numbered) : IMarkdownOrderedList
 {
     private readonly List<string> _items = items.ToList();
+    /// <summary>ToString operation.</summary>
     
     public IEnumerable<string> Items => _items;
 
+    /// <summary>ToString operation.</summary>
     public override string ToString() => style switch
     {
         MarkdownOrderedListStyle.Numbered => JoinNumberedList(),

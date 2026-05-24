@@ -1,8 +1,9 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Line.</summary>
 public class Line(LineStyle lineStyle, int lineWidth = 1) : IMermaidable
 {
-    /// <inheritdoc />
+    /// <summary>Id.</summary>
     public Hash Id { get; } = Hash.NewHash();
     
     /// <inheritdoc />

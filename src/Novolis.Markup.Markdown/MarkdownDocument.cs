@@ -3,21 +3,27 @@ using System.Collections;
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Represents MarkdownDocument.</summary>
 public class MarkdownDocument() : IMarkdownDocument
 {
     private readonly SortedList<int, IMarkdownSection> _sections = new();
+/// <summary>Gets Enumerator</summary>
 
     public IMarkdownSection this[int index] => _sections[index];
+    /// <summary>ToString operation.</summary>
     
     public IEnumerator<IMarkdownSection> GetEnumerator() => _sections.Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <summary>ToString operation.</summary>
     public override string ToString() => string.Join(IMarkdownSection.NewLine, _sections.Values.Select(x => x.ToString())) + IMarkdownSection.NewLine;
+    /// <summary>With operation.</summary>
     public IMarkdownDocument With(IMarkdownSection section)
     {
         _sections.Add(_sections.Count, section);
         return this;
     }
+/// <summary>With operation.</summary>
 
     public IMarkdownDocument With(IEnumerable<IMarkdownSection> sections)
     {
@@ -27,7 +33,10 @@ public class MarkdownDocument() : IMarkdownDocument
         }
         return this;
     }
-    
+
+    /// <summary>Parses a simple Markdown string into a document.</summary>
+    /// <param name="markdown">The Markdown source text.</param>
+    /// <returns>A populated document.</returns>
     public static IMarkdownDocument Parse(string markdown)
     {
         var document = new MarkdownDocument();
@@ -74,14 +83,19 @@ public class MarkdownDocument() : IMarkdownDocument
         }
         return document;
     }
+    /// <summary>Creates a resource.</summary>
     
     public static IMarkdownDocument Empty => new MarkdownDocument();
     
+    /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(params IMarkdownSection[] sections) => new MarkdownDocument().With(sections);
+    /// <summary>Creates a resource.</summary>
     
     public static IMarkdownDocument Create(IEnumerable<IMarkdownSection> sections) => new MarkdownDocument().With(sections);
     
+    /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(params string[] sections) => new MarkdownDocument().With(sections.Select(x => new MarkdownParagraph().WithText(x)));
     
+    /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(IEnumerable<string> sections) => new MarkdownDocument().With(sections.Select(x => new MarkdownParagraph().WithText(x)));
 }

@@ -1,10 +1,13 @@
 namespace Novolis.Markup.Mermaid;
 
+/// <summary>Represents Node.</summary>
 public class Node(Hash id, string label, Shape shape) : IMermaidable
 {
+    /// <summary>Node operation.</summary>
     public Node(string label) : this(Hash.NewHash(), label, Shape.Rectangle)
     {
     }
+    /// <summary>Node operation.</summary>
     
     public Node(string label, Shape shape) : this(Hash.NewHash(), label, shape)
     {
@@ -12,8 +15,10 @@ public class Node(Hash id, string label, Shape shape) : IMermaidable
 
     /// <inheritdoc />
     public Hash Id { get; } = id;
+/// <summary>Shape.</summary>
 
     public string Label { get; } = label;
+    /// <summary>Shape.</summary>
     public Shape Shape { get; } = shape;
 
     /// <inheritdoc />
