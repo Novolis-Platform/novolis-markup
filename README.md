@@ -7,7 +7,10 @@ Programmatic Markdown and Mermaid text builders for .NET, migrated from [Frank.M
 | Package | Description |
 |---------|-------------|
 | `Novolis.Markup.Markdown` | Fluent GitHub-flavored Markdown document builder |
+| `Novolis.Markup.Markdown.Rendering` | Markdig HTML rendering and export (HTML, PDF via QuestPDF) |
 | `Novolis.Markup.Mermaid` | Fluent Mermaid diagram syntax builder (flowchart, sequence, gantt, …) |
+
+Avalonia editor and preview controls live in [`novolis-avalonia`](https://github.com/Novolis-Platform/novolis-avalonia) as `Novolis.Avalonia.Markdown`.
 
 Reflection-based class diagrams remain in `Novolis.CodeGen.Reflection.ClassDiagram` ([novolis-codegen](https://github.com/Novolis-Platform/novolis-codegen)).
 
