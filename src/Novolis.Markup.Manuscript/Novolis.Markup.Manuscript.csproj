@@ -3,7 +3,12 @@
     <PackageId>Novolis.Markup.Manuscript</PackageId>
     <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Manuscript</RootNamespace>
-    <Description>Chapter callout/YAML metadata parse, apply, and body word-count helpers.</Description>
+    <Description>Manuscript workspace catalog, chapter metadata, diagnostics, and book/reference PDF export.</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Novolis.IO.Paths" />
+    <PackageReference Include="YamlDotNet" />
+    <ProjectReference Include="..\Novolis.Markup.Markdown.Rendering\Novolis.Markup.Markdown.Rendering.csproj" />
+  </ItemGroup>
 </Project>

@@ -10,6 +10,8 @@ See the [Novolis release policy](https://github.com/Novolis-Platform/novolis-gov
 |---------|---------|
 | `Novolis.Markup.Markdown` | `src/Novolis.Markup.Markdown` |
 | `Novolis.Markup.Mermaid` | `src/Novolis.Markup.Mermaid` |
+| `Novolis.Markup.Manuscript` | `src/Novolis.Markup.Manuscript` |
+| `Novolis.Markup.Markdown.Rendering` | `src/Novolis.Markup.Markdown.Rendering` |
 
 ## Local validation
 

@@ -1,9 +1,3 @@
 # Novolis.Markup.Manuscript
 
-Chapter callout / YAML metadata parse, apply, and body word-count helpers.
-
-## Install
-
-```bash
-dotnet add package Novolis.Markup.Manuscript
-```
+Chapter metadata, content catalog, structural diagnostics, and book/reference PDF export for manuscript workspaces.
