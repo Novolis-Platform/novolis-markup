@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Novolis.Markup.Manuscript</PackageId>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>Novolis.Markup.Manuscript</RootNamespace>
+    <Description>Chapter callout/YAML metadata parse, apply, and body word-count helpers.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

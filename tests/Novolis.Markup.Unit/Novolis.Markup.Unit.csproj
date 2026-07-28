@@ -13,5 +13,6 @@
     <ProjectReference Include="../../src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj" />
     <ProjectReference Include="../../src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj" />
     <ProjectReference Include="../../src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
+    <ProjectReference Include="../../src/Novolis.Markup.Manuscript/Novolis.Markup.Manuscript.csproj" />
   </ItemGroup>
 </Project>

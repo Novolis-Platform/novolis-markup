@@ -3,6 +3,7 @@
     <Project Path="src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj" />
     <Project Path="src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj" />
     <Project Path="src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
+    <Project Path="src/Novolis.Markup.Manuscript/Novolis.Markup.Manuscript.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Novolis.Markup.Unit/Novolis.Markup.Unit.csproj" />
