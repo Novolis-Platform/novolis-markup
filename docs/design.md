@@ -10,9 +10,9 @@ Programmatic construction of **Markdown** and **Mermaid** text without templates
 |---------|----------------|
 | `Novolis.Markup.Markdown` | Section-based GFM documents (headers, lists, tables, alerts, code blocks) and optional HTML export |
 | `Novolis.Markup.Markdown.Rendering` | Raw Markdown → HTML (Markdig), themed documents, HTML file export, PDF export (QuestPDF) |
-| `Novolis.Markup.Mermaid` | Diagram builders (flowchart, git graph, pie chart, timeline, XY chart) emitting Mermaid source |
+| `Novolis.Markup.Mermaid` | Diagram builders (flowchart, sequence, class, state, ER, gantt, mindmap, C4, and more) emitting Mermaid source |
 
-Avalonia UI (`Novolis.Avalonia.Markdown`) lives in **novolis-avalonia** (Markdig preview built-in). Use `Novolis.Markup.Markdown.Rendering` when you need file export or shared server-side HTML/PDF.
+Avalonia UI (`Novolis.Avalonia.Markdown`, `Novolis.Avalonia.Mermaid`) lives in **novolis-avalonia**. Use `Novolis.Markup.Markdown.Rendering` when you need file export or shared server-side HTML/PDF.
 
 There is no shared runtime dependency between Markdown and Mermaid; reference only what you need.
 
@@ -29,10 +29,13 @@ HTML output uses embedded GitHub-flavored CSS constants (`GithubMarkdownCss`).
 
 - **`IMermaidable`** — stable `Hash` id plus `GetBuilder()` / `GetMermaidString()`.
 - **`IndentedStringBuilder`** — indentation-aware emission shared by diagram types.
+- **`MermaidDiagramKind`** — catalog of supported diagram families.
 - **Flowchart** — nodes, links, subgraphs, shapes, and direction.
-- Other diagram types follow the same builder pattern under their namespaces.
+- Other diagram types (sequence, class, state, ER, gantt, mindmap, C4, …) follow the same builder pattern under their folders.
 
 Reflection-based **class diagrams** live in `Novolis.CodeGen.Reflection.ClassDiagram` ([novolis-codegen](https://github.com/Novolis-Platform/novolis-codegen)), not in this repo.
+
+Avalonia rendering: `Novolis.Avalonia.Mermaid` (`MermaidControl`) in **novolis-avalonia**.
 
 ## Documentation policy
 

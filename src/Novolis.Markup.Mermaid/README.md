@@ -1,6 +1,6 @@
 # Novolis.Markup.Mermaid
 
-Fluent Mermaid diagram syntax builder for .NET (flowchart, git graph, pie chart, timeline, XY chart).
+Fluent Mermaid diagram syntax builder for .NET. Covers the major Mermaid diagram families as first-class builders that emit Mermaid source.
 
 ## Install
 
@@ -9,6 +9,37 @@ dotnet add package Novolis.Markup.Mermaid
 ```
 
 **Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) (`net10.0`).
+
+## Diagram kinds
+
+| Builder | Mermaid header |
+|---------|----------------|
+| `Flowchart` | `flowchart` |
+| `SequenceDiagram` | `sequenceDiagram` |
+| `ClassDiagram` | `classDiagram` |
+| `StateDiagram` | `stateDiagram-v2` |
+| `ErDiagram` | `erDiagram` |
+| `Journey` | `journey` |
+| `Gantt` | `gantt` |
+| `PieChart` | `pie` |
+| `QuadrantChart` | `quadrantChart` |
+| `RequirementDiagram` | `requirementDiagram` |
+| `GitGraph` | `gitGraph` |
+| `Mindmap` | `mindmap` |
+| `Timeline` | `timeline` |
+| `Sankey` | `sankey-beta` |
+| `XyChart` | `xychart-beta` |
+| `BlockDiagram` | `block-beta` |
+| `ArchitectureDiagram` | `architecture-beta` |
+| `C4Diagram` | `C4Context` / `C4Container` / … |
+| `PacketDiagram` | `packet-beta` |
+| `RadarChart` | `radar-beta` |
+| `Treemap` | `treemap-beta` |
+| `Kanban` | `kanban` |
+| `VennDiagram` | `venn-beta` |
+| `TreeView` | `treeView` |
+
+See `MermaidDiagramKind` for the catalog enum.
 
 ## Quick start
 
@@ -25,13 +56,21 @@ chart.AddLink(new Link(start, end, "next"));
 string mermaid = chart.GetMermaidString();
 ```
 
-Paste the result into any Mermaid renderer (docs site, wiki, IDE preview).
+```csharp
+var seq = new SequenceDiagram()
+    .AddParticipant("A", "Alice")
+    .AddParticipant("B", "Bob")
+    .Message("A", "B", "Hello");
+```
+
+Paste the result into any Mermaid renderer. For Avalonia UI rendering, use `Novolis.Avalonia.Mermaid` (`MermaidControl`).
 
 ## Related packages
 
 | Package | When to use |
 |---------|-------------|
 | `Novolis.Markup.Markdown` | GFM documents, tables, alerts, HTML export |
+| `Novolis.Avalonia.Mermaid` | Avalonia control that renders Mermaid source to SVG |
 | `Novolis.CodeGen.Reflection.ClassDiagram` | Class diagrams from .NET types (codegen repo) |
 
 ## More documentation

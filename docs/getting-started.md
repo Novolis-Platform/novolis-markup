@@ -44,7 +44,7 @@ flowchart.AddLink(new Link(a, b));
 string mermaid = flowchart.GetMermaidString();
 ```
 
-Render the returned text with [Mermaid](https://mermaid.js.org/) in a browser, wiki, or documentation site.
+Render the returned text with [Mermaid](https://mermaid.js.org/), or display it in Avalonia via `Novolis.Avalonia.Mermaid` (`MermaidControl`).
 
 ## See also
 

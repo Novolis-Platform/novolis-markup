@@ -3,7 +3,7 @@
     <PackageId>Novolis.Markup.Mermaid</PackageId>
 <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Mermaid</RootNamespace>
-    <Description>Fluent Mermaid diagram syntax builder for .NET (flowchart, pie, timeline, git graph, and more).</Description>
-    <PackageTags>mermaid;diagram;flowchart;fluent;csharp;dotnet</PackageTags>
+    <Description>Fluent Mermaid diagram syntax builder for .NET (flowchart, sequence, class, state, ER, gantt, mindmap, C4, and more).</Description>
+    <PackageTags>mermaid;diagram;flowchart;sequence;gantt;mindmap;fluent;csharp;dotnet</PackageTags>
   </PropertyGroup>
 </Project>
