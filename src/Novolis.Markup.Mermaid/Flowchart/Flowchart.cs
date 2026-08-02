@@ -29,7 +29,7 @@ public class Flowchart(Direction direction = Direction.TopToBottom) : IMermaidab
     /// <inheritdoc />
     public IIndentedStringBuilder GetBuilder()
     {
-        // CleanDuplicates();
+        CleanDuplicates();
         var writer = new IndentedStringBuilder();
         writer.WriteLine("flowchart {0}", direction.GetBuilder());
         writer.IncreaseIndent();
