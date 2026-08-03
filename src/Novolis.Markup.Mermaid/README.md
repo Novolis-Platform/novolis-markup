@@ -1,3 +1,11 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Mermaid
 
 Fluent Mermaid diagram syntax builder for .NET. Covers the major Mermaid diagram families as first-class builders that emit Mermaid source.
@@ -82,3 +90,4 @@ Paste the result into any Mermaid renderer. For Avalonia UI rendering, use `Novo
 ## Support
 
 Pre-release platform package; API may evolve with Novolis governance releases.
+

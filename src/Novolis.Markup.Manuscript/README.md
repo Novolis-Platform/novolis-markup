@@ -1,3 +1,11 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Manuscript
 
 Chapter metadata, content catalog, structural diagnostics, and book/reference PDF export for manuscript workspaces. Used by Books Mobile and Books Writer Studio.
@@ -67,3 +75,4 @@ Used by **BooksWriterStudio** (diagnostics + PDF export) and **BooksMobile** (ca
 
 - [Getting started](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/getting-started.md)
 - [Design](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/design.md)
+

@@ -1,3 +1,11 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Markdown.Rendering
 
 Markdig HTML rendering and document export for raw Markdown source — standalone HTML files and PDF via QuestPDF.
@@ -54,3 +62,4 @@ MarkdownPdfExporter.ExportToFile(markdown, "readme.pdf", new MarkdownPdfExportOp
 
 - [Getting started](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/getting-started.md)
 - [Design](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/design.md)
+

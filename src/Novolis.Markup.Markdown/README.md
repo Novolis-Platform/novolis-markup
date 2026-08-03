@@ -1,3 +1,11 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Markdown
 
 Fluent GitHub-flavored Markdown document builder for .NET.
@@ -40,3 +48,4 @@ string html = doc.ToHtml();
 ## Support
 
 Pre-release platform package; API may evolve with Novolis governance releases.
+
