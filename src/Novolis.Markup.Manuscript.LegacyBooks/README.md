@@ -10,6 +10,14 @@
 
 Isolated adapter for the pre-NMP layout (`content/series`, `content/books`, lowercase `chapters`, `references`/`reference`, callouts, `chapter_order_from_heading`). Returns the same `ManuscriptSnapshot` as NMP/1 without changing Protocol rules.
 
+## Install
+
+```bash
+dotnet add package Novolis.Markup.Manuscript.LegacyBooks
+```
+
+**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) (`net10.0`). Depends on `Novolis.Markup.Manuscript.Protocol`.
+
 ## Mapping notes
 
 - Fiction series under `content/series/<id>` are placed under a synthetic universe id `legacy` (title `Legacy`). Protocol itself still requires real `universe.yaml` for NMP/1 trees.
