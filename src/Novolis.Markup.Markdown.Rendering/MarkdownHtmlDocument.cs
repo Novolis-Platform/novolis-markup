@@ -1,3 +1,5 @@
+using Novolis.Markup.Html;
+
 namespace Novolis.Markup.Markdown.Rendering;
 
 /// <summary>Wraps HTML body fragments in a complete document with theme styles.</summary>
@@ -21,23 +23,17 @@ public static class MarkdownHtmlDocument
             ? "markdown-body"
             : "markdown-body studio";
 
-        var titleTag = string.IsNullOrWhiteSpace(title)
-            ? string.Empty
-            : $"<title>{System.Net.WebUtility.HtmlEncode(title)}</title>";
+        return HtmlMarkup.Document(doc =>
+        {
+            doc.Lang("en").CharsetUtf8();
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                doc.Title(title);
+            }
 
-        return $"""
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                <meta charset="utf-8" />
-                {titleTag}
-                <style>{css}</style>
-                </head>
-                <body class="{bodyClass}">
-                {bodyHtml}
-                </body>
-                </html>
-                """;
+            doc.WithHead(head => head.StyleSheet(css));
+            doc.WithBody(body => body.Class(bodyClass).Raw(bodyHtml));
+        }).ToString();
     }
 
     /// <summary>Converts Markdown source to a complete themed HTML document.</summary>
@@ -49,5 +45,15 @@ public static class MarkdownHtmlDocument
     {
         var body = MarkdigMarkdownRenderer.ToHtml(markdown);
         return Wrap(body, theme, title);
+    }
+
+    /// <summary>Converts a fluent Markdown document to a complete themed HTML document.</summary>
+    public static string FromDocument(
+        IMarkdownDocument document,
+        MarkdownHtmlTheme theme = MarkdownHtmlTheme.StudioDark,
+        string? title = null)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        return Wrap(MarkdownToHtmlConverter.Convert(document), theme, title);
     }
 }

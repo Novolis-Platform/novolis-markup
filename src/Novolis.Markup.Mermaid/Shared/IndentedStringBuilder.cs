@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace Novolis.Markup.Mermaid;
@@ -50,7 +51,7 @@ public class IndentedStringBuilder : IIndentedStringBuilder
     /// <inheritdoc />
     public IIndentedStringBuilder Write(string format, params object?[] args)
     {
-        string formattedText = string.Format(format, args);
+        string formattedText = string.Format(CultureInfo.InvariantCulture, format, args);
         _builder.Append(new string(_indentString[0], _indentLevel * _indentString.Length));
         _builder.Append(formattedText);
         return this;
@@ -59,7 +60,7 @@ public class IndentedStringBuilder : IIndentedStringBuilder
     /// <inheritdoc />
     public IIndentedStringBuilder WriteLine(string format, params object[] args)
     {
-        string formattedText = string.Format(format, args);
+        string formattedText = string.Format(CultureInfo.InvariantCulture, format, args);
         _builder.Append(new string(_indentString[0], _indentLevel * _indentString.Length));
         _builder.AppendLine(formattedText);
         return this;

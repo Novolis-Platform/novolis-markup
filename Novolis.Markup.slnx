@@ -4,6 +4,9 @@
     <Project Path="src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj" />
     <Project Path="src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
     <Project Path="src/Novolis.Markup.Manuscript/Novolis.Markup.Manuscript.csproj" />
+    <Project Path="src/Novolis.Markup.Manuscript.Protocol/Novolis.Markup.Manuscript.Protocol.csproj" />
+    <Project Path="src/Novolis.Markup.Manuscript.LegacyBooks/Novolis.Markup.Manuscript.LegacyBooks.csproj" />
+    <Project Path="src/Novolis.Markup.Html/Novolis.Markup.Html.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Novolis.Markup.Unit/Novolis.Markup.Unit.csproj" />

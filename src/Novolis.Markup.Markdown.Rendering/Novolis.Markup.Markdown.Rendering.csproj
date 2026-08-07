@@ -10,5 +10,6 @@
     <PackageReference Include="Markdig" />
     <PackageReference Include="QuestPDF" />
     <ProjectReference Include="..\Novolis.Markup.Markdown\Novolis.Markup.Markdown.csproj" />
+    <ProjectReference Include="..\Novolis.Markup.Html\Novolis.Markup.Html.csproj" />
   </ItemGroup>
 </Project>

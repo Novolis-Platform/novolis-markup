@@ -14,5 +14,8 @@
     <ProjectReference Include="../../src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj" />
     <ProjectReference Include="../../src/Novolis.Markup.Mermaid/Novolis.Markup.Mermaid.csproj" />
     <ProjectReference Include="../../src/Novolis.Markup.Manuscript/Novolis.Markup.Manuscript.csproj" />
+    <ProjectReference Include="../../src/Novolis.Markup.Manuscript.Protocol/Novolis.Markup.Manuscript.Protocol.csproj" />
+    <ProjectReference Include="../../src/Novolis.Markup.Manuscript.LegacyBooks/Novolis.Markup.Manuscript.LegacyBooks.csproj" />
+    <ProjectReference Include="../../src/Novolis.Markup.Html/Novolis.Markup.Html.csproj" />
   </ItemGroup>
 </Project>

@@ -72,7 +72,7 @@ public sealed class MermaidExtendedTests
 
         await Assert.That(text).Contains("quadrantChart");
         await Assert.That(text).Contains("A:");
-        await Assert.That(text).Contains("0,8");
+        await Assert.That(text).Contains("[0.2, 0.8]");
     }
 
     [Test]

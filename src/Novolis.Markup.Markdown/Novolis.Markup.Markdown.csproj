@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>Novolis.Markup.Markdown</PackageId>
-<IsPackable>true</IsPackable>
+    <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Markdown</RootNamespace>
     <Description>Fluent GitHub-flavored Markdown document builder for .NET.</Description>
     <PackageTags>markdown;documentation;fluent;github;csharp;dotnet</PackageTags>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Novolis.Markup.Html\Novolis.Markup.Html.csproj" />
+  </ItemGroup>
 </Project>
