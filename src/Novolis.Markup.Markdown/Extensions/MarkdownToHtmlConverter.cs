@@ -30,8 +30,8 @@ public static class MarkdownToHtmlConverter
         IMarkdownParagraph paragraph => ConvertParagraph(paragraph),
         IMarkdownQuote quote => HtmlMarkup.Blockquote(quote.Text),
         IMarkdownTable table => HtmlMarkup.Table(table.Headers, table.Rows),
-        IMarkdownUnorderedList list => HtmlMarkup.Ul(list.Items.Select(static x => StripNestMarker(x))),
-        IMarkdownOrderedList list => HtmlMarkup.Ol(list.Items.Select(static x => StripNestMarker(x))),
+        IMarkdownUnorderedList list => ConvertList(HtmlMarkup.Ul(), list.Items),
+        IMarkdownOrderedList list => ConvertList(HtmlMarkup.Ol(), list.Items),
         IMarkdownHorizontalRule => HtmlMarkup.Hr(),
         _ => null,
     };
@@ -43,9 +43,27 @@ public static class MarkdownToHtmlConverter
         return HtmlMarkup.Alert(level, text);
     }
 
+    private static HtmlElement ConvertList(HtmlElement list, IEnumerable<string> items)
+    {
+        foreach (var item in items)
+        {
+            MarkdownDocument.DecodeNestDepth(item, out var body);
+            var paragraph = MarkdownDocument.ParseInlineParagraph(body);
+            list.Li(li => AppendInlines(li, paragraph));
+        }
+
+        return list;
+    }
+
     private static HtmlElement ConvertParagraph(IMarkdownParagraph paragraph)
     {
         var p = HtmlMarkup.P();
+        AppendInlines(p, paragraph);
+        return p;
+    }
+
+    private static void AppendInlines(HtmlElement host, IMarkdownParagraph paragraph)
+    {
         string? pendingLinkText = null;
 
         foreach (var inline in paragraph.Items)
@@ -55,35 +73,35 @@ public static class MarkdownToHtmlConverter
                 case MarkdownParagraphItemType.Text:
                 case MarkdownParagraphItemType.Indent:
                 case MarkdownParagraphItemType.NewLine:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Text(inline.Text);
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Text(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Bold:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Strong(inline.Text);
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Strong(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Italic:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Em(inline.Text);
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Em(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Strikethrough:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Child(HtmlMarkup.Del(inline.Text));
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Child(HtmlMarkup.Del(inline.Text));
                     break;
                 case MarkdownParagraphItemType.Underline:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Child(HtmlMarkup.U(inline.Text));
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Child(HtmlMarkup.U(inline.Text));
                     break;
                 case MarkdownParagraphItemType.Code:
-                    FlushPendingLink(p, ref pendingLinkText);
-                    p.Code(inline.Text);
+                    FlushPendingLink(host, ref pendingLinkText);
+                    host.Code(inline.Text);
                     break;
                 case MarkdownParagraphItemType.LinkText:
-                    FlushPendingLink(p, ref pendingLinkText);
+                    FlushPendingLink(host, ref pendingLinkText);
                     pendingLinkText = inline.Text;
                     break;
                 case MarkdownParagraphItemType.Link:
-                    p.Child(HtmlMarkup.A(inline.Text, pendingLinkText ?? string.Empty));
+                    host.Child(HtmlMarkup.A(inline.Text, pendingLinkText ?? string.Empty));
                     pendingLinkText = null;
                     break;
                 default:
@@ -91,8 +109,7 @@ public static class MarkdownToHtmlConverter
             }
         }
 
-        FlushPendingLink(p, ref pendingLinkText);
-        return p;
+        FlushPendingLink(host, ref pendingLinkText);
     }
 
     private static void FlushPendingLink(HtmlElement paragraph, ref string? pendingLinkText)
@@ -106,9 +123,4 @@ public static class MarkdownToHtmlConverter
         pendingLinkText = null;
     }
 
-    static string StripNestMarker(string item)
-    {
-        MarkdownDocument.DecodeNestDepth(item, out var body);
-        return body;
-    }
 }
