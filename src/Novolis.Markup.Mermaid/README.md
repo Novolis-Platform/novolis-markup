@@ -71,13 +71,14 @@ var seq = new SequenceDiagram()
     .Message("A", "B", "Hello");
 ```
 
-Paste the result into any Mermaid renderer. For Avalonia UI rendering, use `Novolis.Avalonia.Mermaid` (`MermaidControl`).
+Paste the result into any Mermaid renderer. For headless SVG/PNG export, use `Novolis.Markup.Mermaid.Rendering` (`ToSvg` / `ToPng`). For Avalonia UI, use `Novolis.Avalonia.Mermaid` (`MermaidControl`).
 
 ## Related packages
 
 | Package | When to use |
 |---------|-------------|
 | `Novolis.Markup.Markdown` | GFM documents, tables, alerts, HTML export |
+| `Novolis.Markup.Mermaid.Rendering` | Headless SVG/PNG export for `IMermaidable` |
 | `Novolis.Avalonia.Mermaid` | Avalonia control that renders Mermaid source to SVG |
 | `Novolis.CodeGen.Reflection.ClassDiagram` | Class diagrams from .NET types (codegen repo) |
 

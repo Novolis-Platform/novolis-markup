@@ -42,6 +42,7 @@
 | `Novolis.Markup.Markdown` | `dotnet add package Novolis.Markup.Markdown` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown/README.md) |
 | `Novolis.Markup.Markdown.Rendering` | `dotnet add package Novolis.Markup.Markdown.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Rendering/README.md) |
 | `Novolis.Markup.Mermaid` | `dotnet add package Novolis.Markup.Mermaid` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid/README.md) |
+| `Novolis.Markup.Mermaid.Rendering` | `dotnet add package Novolis.Markup.Mermaid.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid.Rendering/README.md) |
 
 For NuGet.org and Visual Studio, the **embedded** README.md inside each package is authoritative.
 
@@ -57,6 +58,7 @@ Programmatic Markdown, Mermaid, and manuscript tooling for .NET — migrated fro
 | `Novolis.Markup.Markdown` | Fluent GitHub-flavored Markdown document builder |
 | `Novolis.Markup.Markdown.Rendering` | Markdig HTML rendering and export (HTML, PDF via QuestPDF) |
 | `Novolis.Markup.Mermaid` | Fluent Mermaid diagram syntax builder (flowchart, sequence, gantt, …) |
+| `Novolis.Markup.Mermaid.Rendering` | Headless Mermaid SVG/PNG export (`ToSvg` / `ToPng` on `IMermaidable`) |
 | `Novolis.Markup.Manuscript` | Chapter metadata, content catalog, diagnostics, book/reference PDF export |
 
 Avalonia editor and preview controls live in [`novolis-avalonia`](https://github.com/Novolis-Platform/novolis-avalonia) as `Novolis.Avalonia.Markdown` and `Novolis.Avalonia.Mermaid`.

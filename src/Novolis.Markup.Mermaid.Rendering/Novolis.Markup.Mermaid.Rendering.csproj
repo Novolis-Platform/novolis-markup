@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Novolis.Markup.Mermaid.Rendering</PackageId>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>Novolis.Markup.Mermaid.Rendering</RootNamespace>
+    <Description>Headless Mermaid diagram export to SVG (Mermaider) and PNG (Svg.Skia) for Novolis.Markup.Mermaid builders.</Description>
+    <PackageTags>mermaid;diagram;svg;png;export;rendering;mermaider;csharp;dotnet</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Mermaider" />
+    <PackageReference Include="Svg.Skia" />
+    <ProjectReference Include="..\Novolis.Markup.Mermaid\Novolis.Markup.Mermaid.csproj" />
+  </ItemGroup>
+</Project>
