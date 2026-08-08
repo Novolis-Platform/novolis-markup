@@ -30,8 +30,8 @@ public static class MarkdownToHtmlConverter
         IMarkdownParagraph paragraph => ConvertParagraph(paragraph),
         IMarkdownQuote quote => HtmlMarkup.Blockquote(quote.Text),
         IMarkdownTable table => HtmlMarkup.Table(table.Headers, table.Rows),
-        IMarkdownUnorderedList list => HtmlMarkup.Ul(list.Items.Select(StripNestMarker)),
-        IMarkdownOrderedList list => HtmlMarkup.Ol(list.Items.Select(StripNestMarker)),
+        IMarkdownUnorderedList list => HtmlMarkup.Ul(list.Items.Select(static x => StripNestMarker(x))),
+        IMarkdownOrderedList list => HtmlMarkup.Ol(list.Items.Select(static x => StripNestMarker(x))),
         IMarkdownHorizontalRule => HtmlMarkup.Hr(),
         _ => null,
     };

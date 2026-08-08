@@ -213,7 +213,7 @@ public class MarkdownDocument() : IMarkdownDocument
         depth <= 0 ? string.Empty : new string('\u0001', depth);
 
     /// <summary>Reads nest depth encoded by <see cref="EncodeNestDepth"/>.</summary>
-    internal static int DecodeNestDepth(string item, out string body)
+    public static int DecodeNestDepth(string item, out string body)
     {
         var depth = 0;
         while (depth < item.Length && item[depth] == '\u0001')
