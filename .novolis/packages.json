@@ -44,6 +44,17 @@
         "Novolis.Markup.slnx"
       ]
     },
+    "Novolis.Markup.Markdown.Documents": {
+      "project": "src/Novolis.Markup.Markdown.Documents/Novolis.Markup.Markdown.Documents.csproj",
+      "paths": [
+        "src/Novolis.Markup.Markdown.Documents/**",
+        "tests/Novolis.Markup.Unit/Markdown/Documents/**",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "Novolis.Markup.slnx"
+      ]
+    },
     "Novolis.Markup.Mermaid.Rendering": {
       "project": "src/Novolis.Markup.Mermaid.Rendering/Novolis.Markup.Mermaid.Rendering.csproj",
       "paths": [

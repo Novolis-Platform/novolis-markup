@@ -41,6 +41,7 @@
 | `Novolis.Markup.Manuscript` | `dotnet add package Novolis.Markup.Manuscript` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Manuscript/README.md) |
 | `Novolis.Markup.Markdown` | `dotnet add package Novolis.Markup.Markdown` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown/README.md) |
 | `Novolis.Markup.Markdown.Rendering` | `dotnet add package Novolis.Markup.Markdown.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Rendering/README.md) |
+| `Novolis.Markup.Markdown.Documents` | `dotnet add package Novolis.Markup.Markdown.Documents` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Documents/README.md) |
 | `Novolis.Markup.Mermaid` | `dotnet add package Novolis.Markup.Mermaid` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid/README.md) |
 | `Novolis.Markup.Mermaid.Rendering` | `dotnet add package Novolis.Markup.Mermaid.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid.Rendering/README.md) |
 
@@ -57,6 +58,7 @@ Programmatic Markdown, Mermaid, and manuscript tooling for .NET — migrated fro
 |---------|-------------|
 | `Novolis.Markup.Markdown` | Fluent GitHub-flavored Markdown document builder |
 | `Novolis.Markup.Markdown.Rendering` | Markdig HTML rendering and export (HTML, PDF via QuestPDF) |
+| `Novolis.Markup.Markdown.Documents` | Fluent Markdown → `PagedDocument` / PDF via Documents.Skia (no Markdig) |
 | `Novolis.Markup.Mermaid` | Fluent Mermaid diagram syntax builder (flowchart, sequence, gantt, …) |
 | `Novolis.Markup.Mermaid.Rendering` | Headless Mermaid SVG/PNG export (`ToSvg` / `ToPng` on `IMermaidable`) |
 | `Novolis.Markup.Manuscript` | Chapter metadata, content catalog, diagnostics, book/reference PDF export |
