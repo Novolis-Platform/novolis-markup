@@ -30,7 +30,7 @@ public class Event(string title, DateTime date, TimePeriod timePeriod = TimePeri
             TimePeriod.Millisecond => dateTime.ToString("yyyy-MM-dd HH:mm:ss.fff"),
             TimePeriod.Microsecond => dateTime.ToString("yyyy-MM-dd HH:mm:ss.ffffff"),
             TimePeriod.Nanosecond => dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff"),
-            TimePeriod.Tick => dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffffff"),
+            TimePeriod.Tick => dateTime.ToString("yyyy-MM-dd HH:mm:ss.fffffff"),
             _ => throw new ArgumentOutOfRangeException()
         };
     }
