@@ -3,12 +3,10 @@
     <PackageId>Novolis.Markup.Markdown.Rendering</PackageId>
     <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Markdown.Rendering</RootNamespace>
-    <Description>Markdig HTML rendering and document export (HTML, PDF) for Markdown source.</Description>
-    <PackageTags>markdown;markdig;html;pdf;questpdf;export;rendering;csharp;dotnet</PackageTags>
+    <Description>HTML document export for Markdown source (Novolis.Markup.Markdown). PDF via Novolis.Markup.Markdown.Documents + Documents.Skia.</Description>
+    <PackageTags>markdown;html;export;rendering;csharp;dotnet</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Markdig" />
-    <PackageReference Include="QuestPDF" />
     <ProjectReference Include="..\Novolis.Markup.Markdown\Novolis.Markup.Markdown.csproj" />
     <ProjectReference Include="..\Novolis.Markup.Html\Novolis.Markup.Html.csproj" />
   </ItemGroup>

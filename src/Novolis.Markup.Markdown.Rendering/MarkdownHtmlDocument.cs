@@ -6,7 +6,7 @@ namespace Novolis.Markup.Markdown.Rendering;
 public static class MarkdownHtmlDocument
 {
     /// <summary>Wraps a body HTML fragment in a full HTML document using the given theme.</summary>
-    /// <param name="bodyHtml">HTML fragment from Markdig or another renderer.</param>
+    /// <param name="bodyHtml">HTML fragment from <see cref="NovolisMarkdownRenderer"/> or fluent convert.</param>
     /// <param name="theme">Visual theme for the document.</param>
     /// <param name="title">Optional document title.</param>
     /// <returns>Complete HTML document string.</returns>
@@ -43,7 +43,7 @@ public static class MarkdownHtmlDocument
     /// <returns>Complete HTML document.</returns>
     public static string FromMarkdown(string markdown, MarkdownHtmlTheme theme = MarkdownHtmlTheme.StudioDark, string? title = null)
     {
-        var body = MarkdigMarkdownRenderer.ToHtml(markdown);
+        var body = NovolisMarkdownRenderer.ToHtml(markdown);
         return Wrap(body, theme, title);
     }
 

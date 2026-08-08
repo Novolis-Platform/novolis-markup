@@ -9,10 +9,11 @@ Programmatic construction of **Markdown** and **Mermaid** text without templates
 | Package | Responsibility |
 |---------|----------------|
 | `Novolis.Markup.Markdown` | Section-based GFM documents (headers, lists, tables, alerts, code blocks) and optional HTML export |
-| `Novolis.Markup.Markdown.Rendering` | Raw Markdown → HTML (Markdig), themed documents, HTML file export, PDF export (QuestPDF) |
+| `Novolis.Markup.Markdown.Rendering` | Themed HTML documents / file export via Novolis Markdown |
+| `Novolis.Markup.Markdown.Documents` | Markdown → `PagedDocument` / PDF via Documents.Skia |
 | `Novolis.Markup.Mermaid` | Diagram builders (flowchart, sequence, class, state, ER, gantt, mindmap, C4, and more) emitting Mermaid source |
 
-Avalonia UI (`Novolis.Avalonia.Markdown`, `Novolis.Avalonia.Mermaid`) lives in **novolis-avalonia**. Use `Novolis.Markup.Markdown.Rendering` when you need file export or shared server-side HTML/PDF.
+Avalonia UI (`Novolis.Avalonia.Markdown`, `Novolis.Avalonia.Mermaid`) lives in **novolis-avalonia**. Use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` for PDF — not QuestPDF.
 
 There is no shared runtime dependency between Markdown and Mermaid; reference only what you need.
 

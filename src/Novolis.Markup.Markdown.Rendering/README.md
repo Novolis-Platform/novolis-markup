@@ -1,65 +1,25 @@
-<!-- novolis-pkg-brand:start -->
-<p align="center">
-  <a href="https://github.com/Novolis-Platform/novolis-markup">
-    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
-  </a>
-</p>
-<!-- novolis-pkg-brand:end -->
-
 # Novolis.Markup.Markdown.Rendering
 
-Markdig HTML rendering and document export for raw Markdown source — standalone HTML files and PDF via QuestPDF.
-
-## Install
+Themed HTML document export for Markdown source via `Novolis.Markup.Markdown` (no Markdig).
 
 ```bash
 dotnet add package Novolis.Markup.Markdown.Rendering
 ```
 
-**Prerequisites:** [.NET 10 SDK](https://dotnet.microsoft.com/download) (`net10.0`).
-
-## Quick start
-
 ```csharp
 using Novolis.Markup.Markdown.Rendering;
 
-// HTML preview document (dark studio theme)
-var html = MarkdownHtmlDocument.FromMarkdown("# Hello\n\nParagraph.");
+MarkdownHtmlExporter.ExportToFile(markdown, "readme.html", MarkdownHtmlTheme.GitHubLight, title: "Readme");
 
-// Export standalone HTML
-MarkdownHtmlExporter.ExportToFile(markdown, "readme.html", MarkdownHtmlTheme.GitHubLight, "Readme");
-
-// Export PDF (call once at app startup for QuestPDF Community license)
-MarkdownPdfExporter.EnsureCommunityLicense();
-MarkdownPdfExporter.ExportToFile(markdown, "readme.pdf", new MarkdownPdfExportOptions
-{
-    Title = "Readme",
-    Author = "Novolis",
-});
+var html = MarkdownHtmlDocument.FromMarkdown(markdown, MarkdownHtmlTheme.StudioDark, title: "Doc");
+var fragment = NovolisMarkdownRenderer.ToHtml(markdown);
 ```
 
-## API
+For PDF use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` (Documents.Skia), not this package.
 
 | Type | Role |
-|------|------|
-| `MarkdigMarkdownRenderer` | `ToHtml(markdown, pipeline?)` |
-| `MarkdownRenderPipeline` | Default Markdig pipeline |
-| `MarkdownHtmlDocument` | `FromMarkdown`, `Wrap` — full HTML document |
-| `MarkdownHtmlExporter` | `ExportToFile(markdown, path, theme, title)` |
-| `MarkdownPdfExporter` | `EnsureCommunityLicense()`, `ExportToFile`, `ExportToBytes` |
-| `MarkdownHtmlTheme` | `StudioDark`, `GitHubLight`, `GitHubDark` |
-| `MarkdownPdfExportOptions` | Page size, margins, fonts, cover page |
-
-## Related
-
-| Package | Role |
-|---------|------|
-| `Novolis.Markup.Markdown` | Fluent GFM document builder |
-| `Novolis.Markup.Manuscript` | Book/reference PDF export via `MarkdownPdfExporter` |
-| `Novolis.Avalonia.Markdown` | Avalonia editor + live preview controls |
-
-## More documentation
-
-- [Getting started](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/getting-started.md)
-- [Design](https://github.com/Novolis-Platform/novolis-markup/blob/main/docs/design.md)
-
+| --- | --- |
+| `NovolisMarkdownRenderer` | `ToHtml(markdown)` body fragment |
+| `MarkdownHtmlDocument` | Wrap / FromMarkdown / FromDocument |
+| `MarkdownHtmlExporter` | Write standalone HTML files |
+| `MarkdownHtmlTheme` | StudioDark / GitHubLight / GitHubDark |

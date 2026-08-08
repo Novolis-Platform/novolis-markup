@@ -8,7 +8,7 @@
 
 # Novolis.Markup.Markdown.Documents
 
-Map `Novolis.Markup.Markdown` (`IMarkdownDocument`) into `Novolis.Documents.PagedDocument` and export PDF with `Novolis.Documents.Skia`. No Markdig — that stays in `Markdown.Rendering` for GFM HTML/QuestPDF.
+Map `Novolis.Markup.Markdown` (`IMarkdownDocument`) into `Novolis.Documents.PagedDocument` and export PDF with `Novolis.Documents.Skia`. No Markdig or QuestPDF.
 
 Lists, code, quotes, and tables flatten to paragraphs in v1 (Documents block set is intentionally small).
 
@@ -45,7 +45,7 @@ Cover/TOC default off for short docs; pass `IncludeCover` / `IncludeToc` when yo
 | Package | When to use |
 |---------|-------------|
 | `Novolis.Markup.Markdown` | Fluent Markdown document model |
-| `Novolis.Markup.Markdown.Rendering` | GFM HTML + QuestPDF (Markdig) |
+| `Novolis.Markup.Markdown.Rendering` | Themed HTML export (Novolis Markdown) |
 | `Novolis.Documents.Skia` | Paint `PagedDocument` directly |
 
 ## Support

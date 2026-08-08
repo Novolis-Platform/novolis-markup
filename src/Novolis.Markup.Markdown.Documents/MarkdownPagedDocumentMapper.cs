@@ -201,7 +201,14 @@ public static class MarkdownPagedDocumentMapper
 
             case IMarkdownCodeBlock code:
                 if (!string.IsNullOrWhiteSpace(code.Code))
-                    blocks.Add(new DocParagraph { Text = code.Code.TrimEnd() });
+                {
+                    var lines = code.Code.Replace("\r\n", "\n").TrimEnd().Split('\n');
+                    blocks.Add(new CodeBlock
+                    {
+                        Lines = lines,
+                        Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                    });
+                }
                 break;
 
             case IMarkdownAlert alert:

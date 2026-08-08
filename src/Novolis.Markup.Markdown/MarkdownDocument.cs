@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Text;
+using System.Text.RegularExpressions;
 
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
@@ -7,24 +9,25 @@ namespace Novolis.Markup.Markdown;
 public class MarkdownDocument() : IMarkdownDocument
 {
     private readonly SortedList<int, IMarkdownSection> _sections = new();
-/// <summary>Gets Enumerator</summary>
 
+    /// <summary>Gets Enumerator</summary>
     public IMarkdownSection this[int index] => _sections[index];
+
     /// <summary>ToString operation.</summary>
-    
     public IEnumerator<IMarkdownSection> GetEnumerator() => _sections.Values.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>ToString operation.</summary>
     public override string ToString() => string.Join(IMarkdownSection.NewLine, _sections.Values.Select(x => x.ToString())) + IMarkdownSection.NewLine;
+
     /// <summary>With operation.</summary>
     public IMarkdownDocument With(IMarkdownSection section)
     {
         _sections.Add(_sections.Count, section);
         return this;
     }
-/// <summary>With operation.</summary>
 
+    /// <summary>With operation.</summary>
     public IMarkdownDocument With(IEnumerable<IMarkdownSection> sections)
     {
         foreach (var section in sections)
@@ -34,115 +37,265 @@ public class MarkdownDocument() : IMarkdownDocument
         return this;
     }
 
-    /// <summary>Parses a simple Markdown string into a document.</summary>
-    /// <param name="markdown">The Markdown source text.</param>
-    /// <returns>A populated document.</returns>
+    static readonly Regex OrderedItem = new(@"^\d+\.\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    static readonly Regex ThematicBreak = new(@"^\s{0,3}([-*_])\1{2,}\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    static readonly Regex FenceOpen = new(@"^\s{0,3}```([\w+-]*)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+    /// <summary>Parses a Markdown string into a document (Novolis subset: headings, paragraphs with inlines, lists, tables, fences, HR, quotes/callouts).</summary>
     public static IMarkdownDocument Parse(string markdown)
     {
         var document = new MarkdownDocument();
-        var groups = markdown.Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.None);
+        var text = (markdown ?? string.Empty).Replace("\r\n", "\n");
+        var lines = text.Split('\n');
+        var i = 0;
 
-        foreach (var group in groups)
+        while (i < lines.Length)
         {
-            if (string.IsNullOrWhiteSpace(group))
+            if (string.IsNullOrWhiteSpace(lines[i]))
+            {
+                i++;
                 continue;
+            }
 
-            var lines = group.Split('\n');
-            if (lines[0].StartsWith('#'))
+            var fence = FenceOpen.Match(lines[i]);
+            if (fence.Success)
             {
-                var header = lines[0];
+                var lang = fence.Groups[1].Value;
+                i++;
+                var code = new StringBuilder();
+                while (i < lines.Length && !lines[i].TrimStart().StartsWith("```", StringComparison.Ordinal))
+                {
+                    if (code.Length > 0)
+                        code.Append('\n');
+                    code.Append(lines[i]);
+                    i++;
+                }
+
+                if (i < lines.Length)
+                    i++; // closing fence
+                document.With(new MarkdownCodeBlock(code.ToString(), lang));
+                continue;
+            }
+
+            if (ThematicBreak.IsMatch(lines[i]) && !lines[i].TrimStart().StartsWith("#", StringComparison.Ordinal))
+            {
+                // Avoid treating "***" scene breaks that are only asterisks as HR when mid-paragraph;
+                // standalone thematic lines become horizontal rules (mapper → SceneBreak).
+                document.With(new MarkdownHorizontalRule());
+                i++;
+                continue;
+            }
+
+            if (lines[i].StartsWith('#'))
+            {
+                var header = lines[i];
                 var level = header.TakeWhile(static x => x == '#').Count();
-                var text = header[level..].Trim();
-                document.With(new MarkdownHeader(text, level));
-                // Keep Obsidian-style callouts / quotes that share the heading group
-                // (no blank line between H1 and `> [!date]` …).
-                AppendLeadingQuotes(document, lines.Skip(1));
-                var remainder = lines.Skip(1).SkipWhile(static l => l.StartsWith('>')).ToArray();
-                if (remainder.Length > 0 && remainder.Any(static l => !string.IsNullOrWhiteSpace(l)))
-                    AppendGroup(document, string.Join('\n', remainder));
+                var headerText = header[level..].Trim();
+                document.With(new MarkdownHeader(headerText, level));
+                i++;
+                while (i < lines.Length && lines[i].StartsWith('>'))
+                {
+                    AppendQuoteLine(document, lines[i]);
+                    i++;
+                }
+
+                continue;
             }
-            else
+
+            if (lines[i].StartsWith('>'))
             {
-                AppendGroup(document, group);
+                while (i < lines.Length && lines[i].StartsWith('>'))
+                {
+                    AppendQuoteLine(document, lines[i]);
+                    i++;
+                }
+
+                continue;
             }
+
+            if (lines[i].StartsWith("- ") || lines[i].StartsWith("* "))
+            {
+                var items = new List<string>();
+                while (i < lines.Length && (lines[i].StartsWith("- ") || lines[i].StartsWith("* ")))
+                {
+                    items.Add(lines[i][2..].Trim());
+                    i++;
+                }
+
+                document.With(new MarkdownUnorderedList(items));
+                continue;
+            }
+
+            if (OrderedItem.IsMatch(lines[i]))
+            {
+                var items = new List<string>();
+                while (i < lines.Length && OrderedItem.IsMatch(lines[i]))
+                {
+                    var m = OrderedItem.Match(lines[i]);
+                    items.Add(lines[i][m.Length..].Trim());
+                    i++;
+                }
+
+                document.With(new MarkdownOrderedList(items));
+                continue;
+            }
+
+            if (lines[i].StartsWith('|'))
+            {
+                var tableLines = new List<string>();
+                while (i < lines.Length && lines[i].StartsWith('|'))
+                {
+                    tableLines.Add(lines[i].Trim().Trim('|').Trim());
+                    i++;
+                }
+
+                if (tableLines.Count > 0)
+                {
+                    var headers = tableLines[0].Split('|').Select(static x => x.Trim()).ToArray();
+                    var rows = tableLines.Skip(1)
+                        .Where(static l => !l.All(static c => c is '-' or '|' or ':' or ' '))
+                        .Select(static x => x.Split('|').Select(static y => y.Trim()))
+                        .ToArray();
+                    document.With(new MarkdownTable<string>(headers, rows));
+                }
+
+                continue;
+            }
+
+            // Paragraph: consume until blank line or block start.
+            var paraLines = new List<string>();
+            while (i < lines.Length
+                   && !string.IsNullOrWhiteSpace(lines[i])
+                   && !lines[i].StartsWith('#')
+                   && !lines[i].StartsWith('>')
+                   && !lines[i].StartsWith("|")
+                   && !lines[i].StartsWith("- ")
+                   && !lines[i].StartsWith("* ")
+                   && !OrderedItem.IsMatch(lines[i])
+                   && !FenceOpen.IsMatch(lines[i])
+                   && !ThematicBreak.IsMatch(lines[i]))
+            {
+                paraLines.Add(lines[i]);
+                i++;
+            }
+
+            if (paraLines.Count > 0)
+                document.With(ParseInlineParagraph(string.Join('\n', paraLines)));
         }
 
         return document;
     }
 
-    static void AppendLeadingQuotes(IMarkdownDocument document, IEnumerable<string> lines)
+    static void AppendQuoteLine(IMarkdownDocument document, string line)
     {
-        foreach (var line in lines)
-        {
-            if (!line.StartsWith('>'))
-                break;
-            document.With(new MarkdownQuote(line[1..].Trim()));
-        }
+        var body = line[1..].Trim();
+        document.With(new MarkdownQuote(body));
     }
 
-    static void AppendGroup(IMarkdownDocument document, string group)
+    /// <summary>Parses common inline markers into paragraph items.</summary>
+    internal static IMarkdownParagraph ParseInlineParagraph(string text)
     {
-        if (string.IsNullOrWhiteSpace(group))
-            return;
+        var paragraph = new MarkdownParagraph();
+        var i = 0;
+        var buffer = new StringBuilder();
 
-        if (group.StartsWith('>'))
+        void FlushText()
         {
-            foreach (var line in group.Split('\n'))
+            if (buffer.Length == 0)
+                return;
+            paragraph.WithText(buffer.ToString());
+            buffer.Clear();
+        }
+
+        while (i < text.Length)
+        {
+            if (text[i] == '`' && TryReadDelimited(text, i, "`", out var code, out var afterCode))
             {
-                if (!line.StartsWith('>'))
-                    continue;
-                document.With(new MarkdownQuote(line[1..].Trim()));
+                FlushText();
+                paragraph.WithCode(code);
+                i = afterCode;
+                continue;
             }
-            return;
+
+            if (text.AsSpan(i).StartsWith("**") && TryReadDelimited(text, i, "**", out var bold, out var afterBold))
+            {
+                FlushText();
+                paragraph.WithBold(bold);
+                i = afterBold;
+                continue;
+            }
+
+            if (text[i] == '*' && TryReadDelimited(text, i, "*", out var italic, out var afterItalic)
+                && !text.AsSpan(i).StartsWith("**"))
+            {
+                FlushText();
+                paragraph.WithItalic(italic);
+                i = afterItalic;
+                continue;
+            }
+
+            if (text[i] == '[' && TryReadLink(text, i, out var label, out var url, out var afterLink))
+            {
+                FlushText();
+                paragraph.WithLink(label, url);
+                i = afterLink;
+                continue;
+            }
+
+            buffer.Append(text[i]);
+            i++;
         }
 
-        if (group.StartsWith("- "))
-        {
-            var items = group.Split('\n').Where(static l => l.StartsWith("- ")).Select(static x => x[2..].Trim());
-            document.With(new MarkdownUnorderedList(items));
-            return;
-        }
-
-        if (group.StartsWith("1. "))
-        {
-            var items = group.Split('\n')
-                .Where(static l => l.Length > 3 && char.IsDigit(l[0]))
-                .Select(static x =>
-                {
-                    var dot = x.IndexOf(". ", StringComparison.Ordinal);
-                    return dot >= 0 ? x[(dot + 2)..].Trim() : x.Trim();
-                });
-            document.With(new MarkdownOrderedList(items));
-            return;
-        }
-
-        if (group.StartsWith('|'))
-        {
-            var lines = group.Split('\n').Select(static x => x.Trim().Trim('|').Trim()).ToArray();
-            var headers = lines[0].Split('|').Select(static x => x.Trim()).ToArray();
-            var rows = lines.Skip(1)
-                .Where(static l => !l.All(static c => c is '-' or '|' or ':' or ' '))
-                .Select(static x => x.Split('|').Select(static y => y.Trim()))
-                .ToArray();
-            document.With(new MarkdownTable<string>(headers, rows));
-            return;
-        }
-
-        document.With(new MarkdownParagraph().WithText(group));
+        FlushText();
+        return paragraph;
     }
+
+    static bool TryReadDelimited(string text, int start, string delim, out string inner, out int end)
+    {
+        inner = string.Empty;
+        end = start;
+        if (!text.AsSpan(start).StartsWith(delim))
+            return false;
+        var open = start + delim.Length;
+        var close = text.IndexOf(delim, open, StringComparison.Ordinal);
+        if (close < 0)
+            return false;
+        inner = text[open..close];
+        end = close + delim.Length;
+        return true;
+    }
+
+    static bool TryReadLink(string text, int start, out string label, out string url, out int end)
+    {
+        label = string.Empty;
+        url = string.Empty;
+        end = start;
+        if (text[start] != '[')
+            return false;
+        var closeLabel = text.IndexOf(']', start + 1);
+        if (closeLabel < 0 || closeLabel + 1 >= text.Length || text[closeLabel + 1] != '(')
+            return false;
+        var closeUrl = text.IndexOf(')', closeLabel + 2);
+        if (closeUrl < 0)
+            return false;
+        label = text[(start + 1)..closeLabel];
+        url = text[(closeLabel + 2)..closeUrl];
+        end = closeUrl + 1;
+        return true;
+    }
+
     /// <summary>Creates a resource.</summary>
-    
     public static IMarkdownDocument Empty => new MarkdownDocument();
-    
+
     /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(params IMarkdownSection[] sections) => new MarkdownDocument().With(sections);
+
     /// <summary>Creates a resource.</summary>
-    
     public static IMarkdownDocument Create(IEnumerable<IMarkdownSection> sections) => new MarkdownDocument().With(sections);
-    
+
     /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(params string[] sections) => new MarkdownDocument().With(sections.Select(x => new MarkdownParagraph().WithText(x)));
-    
+
     /// <summary>Creates a resource.</summary>
     public static IMarkdownDocument Create(IEnumerable<string> sections) => new MarkdownDocument().With(sections.Select(x => new MarkdownParagraph().WithText(x)));
 }
