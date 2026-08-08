@@ -1,21 +1,21 @@
 {
   "packages": {
-    "Novolis.Markup.Markdown": {
-      "project": "src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj",
+    "Novolis.Markup.Html": {
+      "project": "src/Novolis.Markup.Html/Novolis.Markup.Html.csproj",
       "paths": [
-        "src/Novolis.Markup.Markdown/**",
-        "tests/Novolis.Markup.Unit/Markdown/**",
+        "src/Novolis.Markup.Html/**",
+        "tests/Novolis.Markup.Unit/Html/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "global.json",
         "Novolis.Markup.slnx"
       ]
     },
-    "Novolis.Markup.Markdown.Rendering": {
-      "project": "src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj",
+    "Novolis.Markup.Markdown": {
+      "project": "src/Novolis.Markup.Markdown/Novolis.Markup.Markdown.csproj",
       "paths": [
-        "src/Novolis.Markup.Markdown.Rendering/**",
-        "tests/Novolis.Markup.Unit/Rendering/**",
+        "src/Novolis.Markup.Markdown/**",
+        "tests/Novolis.Markup.Unit/Markdown/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "global.json",
@@ -33,44 +33,11 @@
         "Novolis.Markup.slnx"
       ]
     },
-    "Novolis.Markup.Manuscript": {
-      "project": "src/Novolis.Markup.Manuscript/Novolis.Markup.Manuscript.csproj",
+    "Novolis.Markup.Markdown.Rendering": {
+      "project": "src/Novolis.Markup.Markdown.Rendering/Novolis.Markup.Markdown.Rendering.csproj",
       "paths": [
-        "src/Novolis.Markup.Manuscript/**",
-        "tests/Novolis.Markup.Unit/Manuscript*.cs",
-        "Directory.Build.props",
-        "Directory.Packages.props",
-        "global.json",
-        "Novolis.Markup.slnx"
-      ]
-    },
-    "Novolis.Markup.Manuscript.Protocol": {
-      "project": "src/Novolis.Markup.Manuscript.Protocol/Novolis.Markup.Manuscript.Protocol.csproj",
-      "paths": [
-        "src/Novolis.Markup.Manuscript.Protocol/**",
-        "tests/Novolis.Markup.Unit/Protocol/**",
-        "Directory.Build.props",
-        "Directory.Packages.props",
-        "global.json",
-        "Novolis.Markup.slnx"
-      ]
-    },
-    "Novolis.Markup.Manuscript.LegacyBooks": {
-      "project": "src/Novolis.Markup.Manuscript.LegacyBooks/Novolis.Markup.Manuscript.LegacyBooks.csproj",
-      "paths": [
-        "src/Novolis.Markup.Manuscript.LegacyBooks/**",
-        "tests/Novolis.Markup.Unit/LegacyBooks/**",
-        "Directory.Build.props",
-        "Directory.Packages.props",
-        "global.json",
-        "Novolis.Markup.slnx"
-      ]
-    },
-    "Novolis.Markup.Html": {
-      "project": "src/Novolis.Markup.Html/Novolis.Markup.Html.csproj",
-      "paths": [
-        "src/Novolis.Markup.Html/**",
-        "tests/Novolis.Markup.Unit/Html/**",
+        "src/Novolis.Markup.Markdown.Rendering/**",
+        "tests/Novolis.Markup.Unit/Rendering/**",
         "Directory.Build.props",
         "Directory.Packages.props",
         "global.json",
