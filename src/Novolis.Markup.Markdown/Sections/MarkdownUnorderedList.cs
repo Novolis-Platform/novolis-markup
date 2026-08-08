@@ -10,5 +10,10 @@ public class MarkdownUnorderedList(IEnumerable<string> items) : IMarkdownUnorder
     public IEnumerable<string> Items => _items;
 
     /// <summary>ToString operation.</summary>
-    public override string ToString() => string.Join(IMarkdownSection.NewLine, _items.Select(x => $"- {x}")) + IMarkdownSection.NewLine;
+    public override string ToString() =>
+        string.Join(IMarkdownSection.NewLine, _items.Select(static x =>
+        {
+            var depth = MarkdownDocument.DecodeNestDepth(x, out var body);
+            return new string(' ', depth * 2) + "- " + body;
+        })) + IMarkdownSection.NewLine;
 }

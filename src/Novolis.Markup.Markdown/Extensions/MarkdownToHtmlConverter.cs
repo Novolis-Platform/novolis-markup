@@ -30,8 +30,8 @@ public static class MarkdownToHtmlConverter
         IMarkdownParagraph paragraph => ConvertParagraph(paragraph),
         IMarkdownQuote quote => HtmlMarkup.Blockquote(quote.Text),
         IMarkdownTable table => HtmlMarkup.Table(table.Headers, table.Rows),
-        IMarkdownUnorderedList list => HtmlMarkup.Ul(list.Items),
-        IMarkdownOrderedList list => HtmlMarkup.Ol(list.Items),
+        IMarkdownUnorderedList list => HtmlMarkup.Ul(list.Items.Select(StripNestMarker)),
+        IMarkdownOrderedList list => HtmlMarkup.Ol(list.Items.Select(StripNestMarker)),
         IMarkdownHorizontalRule => HtmlMarkup.Hr(),
         _ => null,
     };
@@ -104,5 +104,11 @@ public static class MarkdownToHtmlConverter
 
         paragraph.Text(pendingLinkText);
         pendingLinkText = null;
+    }
+
+    static string StripNestMarker(string item)
+    {
+        MarkdownDocument.DecodeNestDepth(item, out var body);
+        return body;
     }
 }

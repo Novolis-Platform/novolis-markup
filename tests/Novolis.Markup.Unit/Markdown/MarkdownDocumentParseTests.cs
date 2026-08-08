@@ -60,6 +60,31 @@ public sealed class MarkdownDocumentParseTests
     }
 
     [Test]
+    public async Task Parse_NestedUnorderedList_PreservesIndent()
+    {
+        var md = "- parent\n  - child\n    - grandchild";
+        var doc = MarkdownDocument.Parse(md);
+        var text = doc.ToString();
+
+        await Assert.That(text).Contains("- parent");
+        await Assert.That(text).Contains("  - child");
+        await Assert.That(text).Contains("    - grandchild");
+    }
+
+    [Test]
+    public async Task Parse_FencedCodeAndThematicBreak()
+    {
+        var md = "```csharp\nvar x = 1;\n```\n\n---\n\nAfter.";
+        var doc = MarkdownDocument.Parse(md);
+        var text = doc.ToString();
+
+        await Assert.That(text).Contains("```csharp");
+        await Assert.That(text).Contains("var x = 1;");
+        await Assert.That(text).Contains("---");
+        await Assert.That(text).Contains("After.");
+    }
+
+    [Test]
     public async Task Create_FromSectionsAndStrings()
     {
         var doc = MarkdownDocument.Create("alpha", "beta");

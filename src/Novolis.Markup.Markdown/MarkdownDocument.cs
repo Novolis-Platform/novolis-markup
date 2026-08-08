@@ -37,7 +37,8 @@ public class MarkdownDocument() : IMarkdownDocument
         return this;
     }
 
-    static readonly Regex OrderedItem = new(@"^\d+\.\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    static readonly Regex OrderedItem = new(@"^(?<indent>\s*)\d+\.\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    static readonly Regex UnorderedItem = new(@"^(?<indent>\s*)([-*])\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     static readonly Regex ThematicBreak = new(@"^\s{0,3}([-*_])\1{2,}\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     static readonly Regex FenceOpen = new(@"^\s{0,3}```([\w+-]*)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
@@ -113,12 +114,15 @@ public class MarkdownDocument() : IMarkdownDocument
                 continue;
             }
 
-            if (lines[i].StartsWith("- ") || lines[i].StartsWith("* "))
+            if (UnorderedItem.IsMatch(lines[i]) && !ThematicBreak.IsMatch(lines[i]))
             {
                 var items = new List<string>();
-                while (i < lines.Length && (lines[i].StartsWith("- ") || lines[i].StartsWith("* ")))
+                while (i < lines.Length && UnorderedItem.IsMatch(lines[i]) && !ThematicBreak.IsMatch(lines[i]))
                 {
-                    items.Add(lines[i][2..].Trim());
+                    var m = UnorderedItem.Match(lines[i]);
+                    var depth = NestDepth(m.Groups["indent"].Value);
+                    var body = lines[i][m.Length..].Trim();
+                    items.Add(EncodeNestDepth(depth) + body);
                     i++;
                 }
 
@@ -132,7 +136,9 @@ public class MarkdownDocument() : IMarkdownDocument
                 while (i < lines.Length && OrderedItem.IsMatch(lines[i]))
                 {
                     var m = OrderedItem.Match(lines[i]);
-                    items.Add(lines[i][m.Length..].Trim());
+                    var depth = NestDepth(m.Groups["indent"].Value);
+                    var body = lines[i][m.Length..].Trim();
+                    items.Add(EncodeNestDepth(depth) + body);
                     i++;
                 }
 
@@ -169,8 +175,7 @@ public class MarkdownDocument() : IMarkdownDocument
                    && !lines[i].StartsWith('#')
                    && !lines[i].StartsWith('>')
                    && !lines[i].StartsWith("|")
-                   && !lines[i].StartsWith("- ")
-                   && !lines[i].StartsWith("* ")
+                   && !(UnorderedItem.IsMatch(lines[i]) && !ThematicBreak.IsMatch(lines[i]))
                    && !OrderedItem.IsMatch(lines[i])
                    && !FenceOpen.IsMatch(lines[i])
                    && !ThematicBreak.IsMatch(lines[i]))
@@ -190,6 +195,31 @@ public class MarkdownDocument() : IMarkdownDocument
     {
         var body = line[1..].Trim();
         document.With(new MarkdownQuote(body));
+    }
+
+    /// <summary>Nest depth from leading spaces (2 spaces or 1 tab ≈ one level).</summary>
+    internal static int NestDepth(string indent)
+    {
+        if (string.IsNullOrEmpty(indent))
+            return 0;
+        var cols = 0;
+        foreach (var ch in indent)
+            cols += ch == '\t' ? 2 : 1;
+        return System.Math.Clamp(cols / 2, 0, 8);
+    }
+
+    /// <summary>Stores nest depth as leading U+0001 markers (stripped by list ToString / PDF mapper).</summary>
+    internal static string EncodeNestDepth(int depth) =>
+        depth <= 0 ? string.Empty : new string('\u0001', depth);
+
+    /// <summary>Reads nest depth encoded by <see cref="EncodeNestDepth"/>.</summary>
+    internal static int DecodeNestDepth(string item, out string body)
+    {
+        var depth = 0;
+        while (depth < item.Length && item[depth] == '\u0001')
+            depth++;
+        body = item[depth..];
+        return depth;
     }
 
     /// <summary>Parses common inline markers into paragraph items.</summary>

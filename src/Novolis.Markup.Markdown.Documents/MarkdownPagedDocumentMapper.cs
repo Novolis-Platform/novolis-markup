@@ -226,8 +226,13 @@ public static class MarkdownPagedDocumentMapper
             case IMarkdownUnorderedList list:
                 foreach (var item in list.Items)
                 {
-                    if (!string.IsNullOrWhiteSpace(item))
-                        blocks.Add(new DocParagraph { Text = "• " + item.Trim() });
+                    if (string.IsNullOrWhiteSpace(item))
+                        continue;
+                    var depth = MarkdownDocument.DecodeNestDepth(item, out var body);
+                    if (string.IsNullOrWhiteSpace(body))
+                        continue;
+                    // Hanging indent: 3 spaces per nest level before the bullet.
+                    blocks.Add(new DocParagraph { Text = new string(' ', depth * 3) + "• " + body.Trim() });
                 }
                 break;
 
@@ -237,7 +242,10 @@ public static class MarkdownPagedDocumentMapper
                 {
                     if (string.IsNullOrWhiteSpace(item))
                         continue;
-                    blocks.Add(new DocParagraph { Text = $"{order++}. {item.Trim()}" });
+                    var depth = MarkdownDocument.DecodeNestDepth(item, out var body);
+                    if (string.IsNullOrWhiteSpace(body))
+                        continue;
+                    blocks.Add(new DocParagraph { Text = new string(' ', depth * 3) + $"{order++}. {body.Trim()}" });
                 }
                 break;
 
