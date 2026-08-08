@@ -45,6 +45,24 @@ public sealed class MarkdownPagedExportOptions
     /// <summary>Running header template (<c>{title}</c>, <c>{page}</c>). Empty disables header.</summary>
     public string HeaderTemplate { get; init; } = "{title}";
 
+    /// <summary>When true, body headers use <see cref="Header.UseChapterTitle"/> (current level-1 title).</summary>
+    public bool UseChapterTitleHeader { get; init; } = true;
+
     /// <summary>Running footer template. Empty disables footer.</summary>
     public string FooterTemplate { get; init; } = "{page}";
+
+    /// <summary>Include footer on First pages.</summary>
+    public bool FooterOnFirstPage { get; init; }
+
+    /// <summary>Include footer on Toc pages.</summary>
+    public bool FooterOnToc { get; init; }
+
+    /// <summary>Include footer on Last pages.</summary>
+    public bool FooterOnLastPage { get; init; }
+
+    /// <summary>
+    /// Style applied when consecutive <c>&gt; [!tag] value</c> callouts are mapped into a
+    /// <see cref="TextBoxBlock"/> (reader-facing metadata panel).
+    /// </summary>
+    public TextBoxBlock TextBox { get; init; } = new();
 }

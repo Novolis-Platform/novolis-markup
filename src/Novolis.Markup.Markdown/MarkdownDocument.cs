@@ -40,48 +40,95 @@ public class MarkdownDocument() : IMarkdownDocument
     public static IMarkdownDocument Parse(string markdown)
     {
         var document = new MarkdownDocument();
-        var groups = markdown.Split($"{IMarkdownSection.NewLine}{IMarkdownSection.NewLine}");
-        
+        var groups = markdown.Replace("\r\n", "\n").Split("\n\n", StringSplitOptions.None);
+
         foreach (var group in groups)
         {
-            if (group.StartsWith("#"))
+            if (string.IsNullOrWhiteSpace(group))
+                continue;
+
+            var lines = group.Split('\n');
+            if (lines[0].StartsWith('#'))
             {
-                var header = group.Split(IMarkdownSection.NewLine)[0];
-                var level = header.TakeWhile(x => x == '#').Count();
-                var text = header.Substring(level).Trim();
+                var header = lines[0];
+                var level = header.TakeWhile(static x => x == '#').Count();
+                var text = header[level..].Trim();
                 document.With(new MarkdownHeader(text, level));
-            }
-            else if (group.StartsWith(">"))
-            {
-                var text = group.Split(IMarkdownSection.NewLine).Select(x => x.Substring(1).Trim());
-                foreach (string line in text)
-                {
-                    document.With(new MarkdownQuote(line));
-                }
-            }
-            else if (group.StartsWith("- "))
-            {
-                var items = group.Split(IMarkdownSection.NewLine).Select(x => x.Substring(2).Trim());
-                document.With(new MarkdownUnorderedList(items));
-            }
-            else if (group.StartsWith("1. "))
-            {
-                var items = group.Split(IMarkdownSection.NewLine).Select(x => x.Substring(3).Trim());
-                document.With(new MarkdownOrderedList(items));
-            }
-            else if (group.StartsWith("|"))
-            {
-                var lines = group.Split(IMarkdownSection.NewLine).Select(x => x.Substring(1).Trim()).ToArray();
-                var headers = lines.First().Split("|").Select(x => x.Trim()).ToArray();
-                var rows = lines.Skip(1).Select(x => x.Split("|").Select(y => y.Trim())).ToArray();
-                document.With(new MarkdownTable<string>(headers, rows));
+                // Keep Obsidian-style callouts / quotes that share the heading group
+                // (no blank line between H1 and `> [!date]` …).
+                AppendLeadingQuotes(document, lines.Skip(1));
+                var remainder = lines.Skip(1).SkipWhile(static l => l.StartsWith('>')).ToArray();
+                if (remainder.Length > 0 && remainder.Any(static l => !string.IsNullOrWhiteSpace(l)))
+                    AppendGroup(document, string.Join('\n', remainder));
             }
             else
             {
-                document.With(new MarkdownParagraph().WithText(group));
+                AppendGroup(document, group);
             }
         }
+
         return document;
+    }
+
+    static void AppendLeadingQuotes(IMarkdownDocument document, IEnumerable<string> lines)
+    {
+        foreach (var line in lines)
+        {
+            if (!line.StartsWith('>'))
+                break;
+            document.With(new MarkdownQuote(line[1..].Trim()));
+        }
+    }
+
+    static void AppendGroup(IMarkdownDocument document, string group)
+    {
+        if (string.IsNullOrWhiteSpace(group))
+            return;
+
+        if (group.StartsWith('>'))
+        {
+            foreach (var line in group.Split('\n'))
+            {
+                if (!line.StartsWith('>'))
+                    continue;
+                document.With(new MarkdownQuote(line[1..].Trim()));
+            }
+            return;
+        }
+
+        if (group.StartsWith("- "))
+        {
+            var items = group.Split('\n').Where(static l => l.StartsWith("- ")).Select(static x => x[2..].Trim());
+            document.With(new MarkdownUnorderedList(items));
+            return;
+        }
+
+        if (group.StartsWith("1. "))
+        {
+            var items = group.Split('\n')
+                .Where(static l => l.Length > 3 && char.IsDigit(l[0]))
+                .Select(static x =>
+                {
+                    var dot = x.IndexOf(". ", StringComparison.Ordinal);
+                    return dot >= 0 ? x[(dot + 2)..].Trim() : x.Trim();
+                });
+            document.With(new MarkdownOrderedList(items));
+            return;
+        }
+
+        if (group.StartsWith('|'))
+        {
+            var lines = group.Split('\n').Select(static x => x.Trim().Trim('|').Trim()).ToArray();
+            var headers = lines[0].Split('|').Select(static x => x.Trim()).ToArray();
+            var rows = lines.Skip(1)
+                .Where(static l => !l.All(static c => c is '-' or '|' or ':' or ' '))
+                .Select(static x => x.Split('|').Select(static y => y.Trim()))
+                .ToArray();
+            document.With(new MarkdownTable<string>(headers, rows));
+            return;
+        }
+
+        document.With(new MarkdownParagraph().WithText(group));
     }
     /// <summary>Creates a resource.</summary>
     

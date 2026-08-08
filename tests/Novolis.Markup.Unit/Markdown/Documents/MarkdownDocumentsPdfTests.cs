@@ -36,6 +36,36 @@ public sealed class MarkdownDocumentsPdfTests
     }
 
     [Test]
+    public async Task Mapper_groups_chapter_callouts_into_dateline_table()
+    {
+        var md = """
+            # Chapter 144 - Dress Uniform
+            > [!date] 2497.110
+            > [!time] 17:40
+            > [!system] System Y982283
+            > [!location] Earth Fleet battlecruiser, Quartermaster's office
+
+            The door to the quartermaster's office slid open.
+            """;
+
+        var doc = MarkdownPagedDocumentMapper.FromMarkdown(md, new MarkdownPagedExportOptions
+        {
+            Title = "Calypso",
+            IncludeCover = false,
+            IncludeToc = false,
+        });
+
+        await Assert.That(doc.Header).IsNotNull();
+        await Assert.That(doc.Header!.UseChapterTitle).IsTrue();
+
+        var box = doc.Body.OfType<TextBoxBlock>().FirstOrDefault();
+        await Assert.That(box).IsNotNull();
+        await Assert.That(box!.BorderStrokePt).IsGreaterThan(0f);
+        await Assert.That(box.Lines.ToArray())
+            .IsEquivalentTo(["2497.110 17:40", "System Y982283", "Earth Fleet battlecruiser, Quartermaster's office"]);
+    }
+
+    [Test]
     public async Task Exporter_writes_multipage_pdf_bytes()
     {
         var longDoc = new MarkdownDocument()

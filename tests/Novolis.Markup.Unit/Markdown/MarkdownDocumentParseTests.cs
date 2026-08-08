@@ -28,6 +28,27 @@ public sealed class MarkdownDocumentParseTests
     }
 
     [Test]
+    public async Task Parse_keeps_callouts_immediately_under_h1()
+    {
+        var md = """
+            # Chapter 144 - Dress Uniform
+            > [!date] 2497.110
+            > [!time] 17:40
+            > [!system] System Y982283
+            > [!location] Earth Fleet battlecruiser, Quartermaster's office
+
+            The door to the quartermaster's office slid open.
+            """;
+        var doc = MarkdownDocument.Parse(md);
+        var text = doc.ToString();
+
+        await Assert.That(text).Contains("# Chapter 144 - Dress Uniform");
+        await Assert.That(text).Contains("> [!date] 2497.110");
+        await Assert.That(text).Contains("> [!location] Earth Fleet battlecruiser, Quartermaster's office");
+        await Assert.That(text).Contains("quartermaster's office slid open");
+    }
+
+    [Test]
     public async Task Parse_Table()
     {
         var md = "| A | B |\n| 1 | 2 |";

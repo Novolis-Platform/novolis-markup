@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using Novolis.Documents;
 using Novolis.Markup.Markdown;
 using DocHeading = Novolis.Documents.HeadingBlock;
@@ -10,13 +11,17 @@ namespace Novolis.Markup.Markdown.Documents;
 /// <summary>Maps <see cref="IMarkdownDocument"/> into a <see cref="PagedDocument"/>.</summary>
 public static class MarkdownPagedDocumentMapper
 {
+    static readonly Regex CalloutRegex = new(
+        @"^\[!([A-Za-z0-9_-]+)\]\s*(.*)$",
+        RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     /// <summary>Maps a fluent Markdown document to a paged document model.</summary>
     public static PagedDocument FromDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         options ??= new MarkdownPagedExportOptions();
         var title = options.Title ?? InferTitle(document) ?? "Document";
-        var body = MapBody(document);
+        var body = MapBody(document, options);
 
         return new PagedDocument
         {
@@ -38,13 +43,24 @@ public static class MarkdownPagedDocumentMapper
             IncludeToc = options.IncludeToc,
             First = options.First,
             Last = options.Last,
-            SuppressHeaderOnLevel1Open = true,
             Header = string.IsNullOrWhiteSpace(options.HeaderTemplate)
                 ? null
-                : new RunningChrome { Template = options.HeaderTemplate },
+                : new Header
+                {
+                    Template = options.HeaderTemplate,
+                    IncludeBody = true,
+                    UseChapterTitle = options.UseChapterTitleHeader,
+                },
             Footer = string.IsNullOrWhiteSpace(options.FooterTemplate)
                 ? null
-                : new RunningChrome { Template = options.FooterTemplate },
+                : new Footer
+                {
+                    Template = options.FooterTemplate,
+                    IncludeBody = true,
+                    IncludeFirstPage = options.FooterOnFirstPage,
+                    IncludeToc = options.FooterOnToc,
+                    IncludeLastPage = options.FooterOnLastPage,
+                },
             Body = body,
         };
     }
@@ -56,12 +72,111 @@ public static class MarkdownPagedDocumentMapper
     public static PagedDocument FromMarkdown(string markdown, MarkdownPagedExportOptions? options = null) =>
         FromDocument(MarkdownDocument.Parse(markdown ?? string.Empty), options);
 
-    static IReadOnlyList<DocIBlock> MapBody(IMarkdownDocument document)
+    static IReadOnlyList<DocIBlock> MapBody(IMarkdownDocument document, MarkdownPagedExportOptions options)
     {
         var blocks = new List<DocIBlock>();
+        var pendingMeta = new List<(string Tag, string Value)>();
+        var style = options.TextBox;
+
+        void FlushMeta()
+        {
+            if (pendingMeta.Count == 0)
+                return;
+            var lines = BuildDatelineLines(pendingMeta);
+            pendingMeta.Clear();
+            if (lines.Count == 0)
+                return;
+
+            // Reader-facing callout panel → fundamental TextBox (style from export options).
+            blocks.Add(new TextBoxBlock
+            {
+                Lines = lines,
+                PaddingPt = style.PaddingPt,
+                BorderStrokePt = style.BorderStrokePt,
+                BorderColor = style.BorderColor,
+                Background = style.Background,
+                FontSizePt = style.FontSizePt,
+                LineHeight = style.LineHeight,
+                LineGapPt = style.LineGapPt,
+                TextColor = style.TextColor,
+            });
+        }
+
         foreach (var section in document)
+        {
+            if (TryParseMetadataCallout(section, out var tag, out var value))
+            {
+                pendingMeta.Add((tag, value));
+                continue;
+            }
+
+            FlushMeta();
             AppendSection(blocks, section);
+        }
+
+        FlushMeta();
         return blocks;
+    }
+
+    static bool TryParseMetadataCallout(IMarkdownSection section, out string tag, out string value)
+    {
+        tag = string.Empty;
+        value = string.Empty;
+        var text = section switch
+        {
+            IMarkdownAlert alert => string.Join(' ', alert.Text).Trim(),
+            IMarkdownQuote quote => string.Join(' ', quote.Text).Trim(),
+            _ => null,
+        };
+        if (text is null)
+            return false;
+
+        var m = CalloutRegex.Match(text);
+        if (!m.Success)
+            return false;
+
+        tag = m.Groups[1].Value;
+        value = m.Groups[2].Value.Trim();
+        return true;
+    }
+
+    /// <summary>Reader-style dateline: merge adjacent date+time; omit empty values; drop tag labels.</summary>
+    internal static List<string> BuildDatelineLines(IReadOnlyList<(string Tag, string Value)> rows)
+    {
+        var lines = new List<string>();
+        var i = 0;
+        while (i < rows.Count)
+        {
+            var (tag, val) = rows[i];
+            if (string.IsNullOrWhiteSpace(val))
+            {
+                i++;
+                continue;
+            }
+
+            var tl = tag.ToLowerInvariant();
+            if (tl == "date" && i + 1 < rows.Count
+                && rows[i + 1].Tag.Equals("time", StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrWhiteSpace(rows[i + 1].Value))
+            {
+                lines.Add($"{val} {rows[i + 1].Value}");
+                i += 2;
+            }
+            else if (tl == "time" && i + 1 < rows.Count
+                     && rows[i + 1].Tag.Equals("date", StringComparison.OrdinalIgnoreCase)
+                     && !string.IsNullOrWhiteSpace(rows[i + 1].Value))
+            {
+                lines.Add($"{rows[i + 1].Value} {val}");
+                i += 2;
+            }
+            else
+            {
+                lines.Add(val);
+                i++;
+            }
+        }
+
+        return lines;
     }
 
     static void AppendSection(List<DocIBlock> blocks, IMarkdownSection section)
@@ -141,7 +256,7 @@ public static class MarkdownPagedDocumentMapper
             Headers = headers,
             Rows = rows,
             ShowHeader = headers.Length > 0,
-            DrawRules = true,
+            RuleStyle = TableRuleStyle.Grid,
             RepeatHeaderOnPageBreak = true,
         });
     }
