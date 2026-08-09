@@ -65,4 +65,16 @@ public sealed class MarkdownPagedExportOptions
     /// <c>&gt; [!tag] value</c>) are mapped into a <see cref="TextBoxBlock"/>.
     /// </summary>
     public TextBoxBlock TextBox { get; init; } = new();
+
+    /// <summary>
+    /// When true, map labeled pedagogical quotes (Warning / Tip / Note / …) and code fences
+    /// with textbook accent colors. Fiction exports leave this false.
+    /// </summary>
+    public bool UseTextbookChrome { get; init; }
+
+    /// <summary>
+    /// When true, consecutive post-H1 public dateline quotes become a <see cref="TextBoxBlock"/>.
+    /// Textbook exports typically set this false.
+    /// </summary>
+    public bool EnableChapterDatelineBoxes { get; init; } = true;
 }

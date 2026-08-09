@@ -94,6 +94,62 @@ public sealed class MarkdownDocumentsPdfTests
     }
 
     [Test]
+    public async Task Mapper_textbook_warning_becomes_colored_textbox()
+    {
+        var md = """
+            # Chapter 2 - Git
+            > **Warning**: `git add .` stages everything.
+
+            Prose continues.
+            """;
+
+        var textbook = MarkdownPagedDocumentMapper.FromMarkdown(md, new MarkdownPagedExportOptions
+        {
+            Title = "Intro",
+            UseTextbookChrome = true,
+            EnableChapterDatelineBoxes = false,
+        });
+        var warning = textbook.Body.OfType<TextBoxBlock>().Single();
+        await Assert.That(warning.Lines[0].StartsWith("Warning —", StringComparison.Ordinal)).IsTrue();
+        await Assert.That(warning.AccentColor).IsEqualTo(DocumentColor.Parse("#e67e22"));
+        await Assert.That(warning.Background).IsEqualTo(DocumentColor.Parse("#fef5e7"));
+
+        var fiction = MarkdownPagedDocumentMapper.FromMarkdown(md, new MarkdownPagedExportOptions
+        {
+            Title = "Intro",
+            UseTextbookChrome = false,
+        });
+        await Assert.That(fiction.Body.OfType<TextBoxBlock>().Any()).IsFalse();
+        await Assert.That(fiction.Body.OfType<ParagraphBlock>().Any(p =>
+            p.Text.Contains("Warning", StringComparison.OrdinalIgnoreCase))).IsTrue();
+    }
+
+    [Test]
+    public async Task Mapper_textbook_code_uses_accent_chrome_and_h4()
+    {
+        var md = """
+            # Chapter
+            #### Nested topic
+            ```csharp
+            Console.WriteLine("hi");
+            ```
+            """;
+
+        var doc = MarkdownPagedDocumentMapper.FromMarkdown(md, new MarkdownPagedExportOptions
+        {
+            UseTextbookChrome = true,
+            EnableChapterDatelineBoxes = false,
+            Typography = new Typography { CodeFontFamily = "Consolas" },
+        });
+
+        await Assert.That(doc.Body.OfType<HeadingBlock>().Any(h => h.Level == 4)).IsTrue();
+        var code = doc.Body.OfType<CodeBlock>().Single();
+        await Assert.That(code.AccentBorderLeftPt).IsEqualTo(3f);
+        await Assert.That(code.AccentColor).IsEqualTo(DocumentColor.Parse("#4a90e2"));
+        await Assert.That(code.Background).IsEqualTo(DocumentColor.Parse("#f8f8f8"));
+    }
+
+    [Test]
     public async Task Exporter_writes_multipage_pdf_bytes()
     {
         var longDoc = new MarkdownDocument()

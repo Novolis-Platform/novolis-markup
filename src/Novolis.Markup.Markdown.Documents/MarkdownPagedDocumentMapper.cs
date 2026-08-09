@@ -19,6 +19,21 @@ public static class MarkdownPagedDocumentMapper
         @"^(\d{4}\.\d{1,4}(?:\s+\d{1,2}:\d{2})?|\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?|TK|TBD)$",
         RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+    static readonly Regex AdmonitionLabelRegex = new(
+        @"^\*{0,2}(?<label>Warning|Tip|Fun Fact|Note|Best Practice|Rigorous Detail)\*{0,2}\s*[:\-–—]\s*(?<body>.*)$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+    static readonly DocumentColor CodeAccent = DocumentColor.Parse("#4a90e2");
+    static readonly DocumentColor CodeBorder = DocumentColor.Parse("#cccccc");
+    static readonly DocumentColor CodeFill = DocumentColor.Parse("#f8f8f8");
+    static readonly DocumentColor NoteAccent = DocumentColor.Parse("#4a90e2");
+    static readonly DocumentColor NoteFill = DocumentColor.Parse("#e8f4f8");
+    static readonly DocumentColor WarningAccent = DocumentColor.Parse("#e67e22");
+    static readonly DocumentColor WarningFill = DocumentColor.Parse("#fef5e7");
+    static readonly DocumentColor TipAccent = DocumentColor.Parse("#27ae60");
+    static readonly DocumentColor TipFill = DocumentColor.Parse("#e8f8f5");
+    static readonly DocumentColor BodyInk = DocumentColor.Parse("#1a1a1a");
+
     /// <summary>Maps a fluent Markdown document to a paged document model.</summary>
     public static PagedDocument FromDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
     {
@@ -82,7 +97,7 @@ public static class MarkdownPagedDocumentMapper
         var pendingMeta = new List<(string Tag, string Value)>();
         var style = options.TextBox;
         // Dateline box only for consecutive quotes immediately after an H1 (or document start).
-        var allowDatelineBox = true;
+        var allowDatelineBox = options.EnableChapterDatelineBoxes;
 
         void FlushMeta()
         {
@@ -113,8 +128,8 @@ public static class MarkdownPagedDocumentMapper
             if (section is IMarkdownHeader { Level: 1 })
             {
                 FlushMeta();
-                AppendSection(blocks, section);
-                allowDatelineBox = true;
+                AppendSection(blocks, section, options);
+                allowDatelineBox = options.EnableChapterDatelineBoxes;
                 continue;
             }
 
@@ -126,7 +141,7 @@ public static class MarkdownPagedDocumentMapper
 
             allowDatelineBox = false;
             FlushMeta();
-            AppendSection(blocks, section);
+            AppendSection(blocks, section, options);
         }
 
         FlushMeta();
@@ -155,6 +170,10 @@ public static class MarkdownPagedDocumentMapper
             return false;
         if (text.Length == 0)
             return blockAlreadyStarted; // blank > spacer only inside an open block
+
+        // Pedagogical labels are never fiction datelines (even mid-block).
+        if (AdmonitionLabelRegex.IsMatch(text))
+            return false;
 
         var m = CalloutRegex.Match(text);
         if (m.Success)
@@ -211,12 +230,12 @@ public static class MarkdownPagedDocumentMapper
         return lines;
     }
 
-    static void AppendSection(List<DocIBlock> blocks, IMarkdownSection section)
+    static void AppendSection(List<DocIBlock> blocks, IMarkdownSection section, MarkdownPagedExportOptions options)
     {
         switch (section)
         {
             case IMarkdownHeader header:
-                var level = System.Math.Clamp(header.Level, 1, 3);
+                var level = System.Math.Clamp(header.Level, 1, 4);
                 if (!string.IsNullOrWhiteSpace(header.Text))
                     blocks.Add(new DocHeading { Level = level, Text = header.Text.Trim() });
                 break;
@@ -235,11 +254,30 @@ public static class MarkdownPagedDocumentMapper
                 if (!string.IsNullOrWhiteSpace(code.Code))
                 {
                     var lines = code.Code.Replace("\r\n", "\n").TrimEnd().Split('\n');
-                    blocks.Add(new CodeBlock
+                    if (options.UseTextbookChrome)
                     {
-                        Lines = lines,
-                        Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
-                    });
+                        blocks.Add(new CodeBlock
+                        {
+                            Lines = lines,
+                            Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                            Background = CodeFill,
+                            BorderStrokePt = 0.6f,
+                            BorderColor = CodeBorder,
+                            AccentBorderLeftPt = 3f,
+                            AccentColor = CodeAccent,
+                            FontSizePt = 9f,
+                            LineHeight = 1.35f,
+                            TextColor = BodyInk,
+                        });
+                    }
+                    else
+                    {
+                        blocks.Add(new CodeBlock
+                        {
+                            Lines = lines,
+                            Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                        });
+                    }
                 }
                 break;
 
@@ -250,6 +288,12 @@ public static class MarkdownPagedDocumentMapper
                 break;
 
             case IMarkdownQuote quote:
+                if (options.UseTextbookChrome && TryMapAdmonition(quote, out var admonition))
+                {
+                    blocks.Add(admonition);
+                    break;
+                }
+
                 var quoteText = string.Join(" ", quote.Text).Trim();
                 if (!string.IsNullOrWhiteSpace(quoteText))
                     blocks.Add(new DocParagraph { Text = quoteText });
@@ -286,6 +330,70 @@ public static class MarkdownPagedDocumentMapper
                 break;
         }
     }
+
+    static bool TryMapAdmonition(IMarkdownQuote quote, out TextBoxBlock box)
+    {
+        box = null!;
+        var parts = quote.Text.Select(t => t.Trim()).Where(t => t.Length > 0).ToArray();
+        if (parts.Length == 0)
+            return false;
+
+        var match = AdmonitionLabelRegex.Match(parts[0]);
+        if (!match.Success)
+            return false;
+
+        var label = CanonicalAdmonitionLabel(match.Groups["label"].Value);
+        var body = match.Groups["body"].Value.Trim();
+        if (parts.Length > 1)
+        {
+            var rest = string.Join(' ', parts.Skip(1));
+            body = string.IsNullOrWhiteSpace(body) ? rest : body + " " + rest;
+        }
+
+        var (accent, fill) = AdmonitionColors(label);
+        var line = string.IsNullOrWhiteSpace(body) ? label : $"{label} — {body}";
+        box = new TextBoxBlock
+        {
+            Lines = [line],
+            PaddingPt = 8f,
+            BorderStrokePt = 0.5f,
+            BorderColor = accent,
+            Background = fill,
+            AccentBorderLeftPt = 3f,
+            AccentColor = accent,
+            FontSizePt = 10f,
+            LineHeight = 1.35f,
+            LineGapPt = 1f,
+            TextColor = BodyInk,
+        };
+        return true;
+    }
+
+    static string CanonicalAdmonitionLabel(string raw)
+    {
+        var t = raw.Trim();
+        if (t.Equals("Warning", StringComparison.OrdinalIgnoreCase))
+            return "Warning";
+        if (t.Equals("Tip", StringComparison.OrdinalIgnoreCase))
+            return "Tip";
+        if (t.Equals("Fun Fact", StringComparison.OrdinalIgnoreCase))
+            return "Fun Fact";
+        if (t.Equals("Note", StringComparison.OrdinalIgnoreCase))
+            return "Note";
+        if (t.Equals("Best Practice", StringComparison.OrdinalIgnoreCase))
+            return "Best Practice";
+        if (t.Equals("Rigorous Detail", StringComparison.OrdinalIgnoreCase))
+            return "Rigorous Detail";
+        return t;
+    }
+
+    static (DocumentColor Accent, DocumentColor Fill) AdmonitionColors(string label) =>
+        label switch
+        {
+            "Warning" => (WarningAccent, WarningFill),
+            "Tip" or "Fun Fact" => (TipAccent, TipFill),
+            _ => (NoteAccent, NoteFill),
+        };
 
     static void AppendTable(List<DocIBlock> blocks, IMarkdownTable table)
     {
