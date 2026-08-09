@@ -66,6 +66,34 @@ public sealed class MarkdownDocumentsPdfTests
     }
 
     [Test]
+    public async Task Mapper_groups_plain_public_quotes_into_textbox()
+    {
+        var md = """
+            # Chapter 112 - The Wizard
+            > 2496.349
+            > Centralis Omnis System
+            > The Hub, Maintenance Corridor E-17, bulkhead 3
+
+            Ryn rounded the corner.
+            """;
+
+        var doc = MarkdownPagedDocumentMapper.FromMarkdown(md, new MarkdownPagedExportOptions
+        {
+            Title = "Calypso",
+            IncludeCover = false,
+            IncludeToc = false,
+        });
+
+        var box = doc.Body.OfType<TextBoxBlock>().FirstOrDefault();
+        await Assert.That(box).IsNotNull();
+        await Assert.That(box!.Lines.ToArray())
+            .IsEquivalentTo([
+                "2496.349",
+                "Centralis Omnis System",
+                "The Hub, Maintenance Corridor E-17, bulkhead 3"]);
+    }
+
+    [Test]
     public async Task Exporter_writes_multipage_pdf_bytes()
     {
         var longDoc = new MarkdownDocument()

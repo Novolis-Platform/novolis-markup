@@ -61,8 +61,8 @@ public sealed class MarkdownPagedExportOptions
     public bool FooterOnLastPage { get; init; }
 
     /// <summary>
-    /// Style applied when consecutive <c>&gt; [!tag] value</c> callouts are mapped into a
-    /// <see cref="TextBoxBlock"/> (reader-facing metadata panel).
+    /// Style applied when consecutive chapter dateline quotes (<c>&gt; value</c> or legacy
+    /// <c>&gt; [!tag] value</c>) are mapped into a <see cref="TextBoxBlock"/>.
     /// </summary>
     public TextBoxBlock TextBox { get; init; } = new();
 }

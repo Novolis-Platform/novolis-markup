@@ -15,6 +15,10 @@ public static class MarkdownPagedDocumentMapper
         @"^\[!([A-Za-z0-9_-]+)\]\s*(.*)$",
         RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+    static readonly Regex PublicDatelineValueRegex = new(
+        @"^(\d{4}\.\d{1,4}(?:\s+\d{1,2}:\d{2})?|\d{4}-\d{2}-\d{2}(?:\s+\d{1,2}:\d{2})?|TK|TBD)$",
+        RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     /// <summary>Maps a fluent Markdown document to a paged document model.</summary>
     public static PagedDocument FromDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
     {
@@ -77,6 +81,8 @@ public static class MarkdownPagedDocumentMapper
         var blocks = new List<DocIBlock>();
         var pendingMeta = new List<(string Tag, string Value)>();
         var style = options.TextBox;
+        // Dateline box only for consecutive quotes immediately after an H1 (or document start).
+        var allowDatelineBox = true;
 
         void FlushMeta()
         {
@@ -87,7 +93,7 @@ public static class MarkdownPagedDocumentMapper
             if (lines.Count == 0)
                 return;
 
-            // Reader-facing callout panel → fundamental TextBox (style from export options).
+            // Reader-facing dateline panel → fundamental TextBox (style from export options).
             blocks.Add(new TextBoxBlock
             {
                 Lines = lines,
@@ -104,12 +110,21 @@ public static class MarkdownPagedDocumentMapper
 
         foreach (var section in document)
         {
-            if (TryParseMetadataCallout(section, out var tag, out var value))
+            if (section is IMarkdownHeader { Level: 1 })
+            {
+                FlushMeta();
+                AppendSection(blocks, section);
+                allowDatelineBox = true;
+                continue;
+            }
+
+            if (allowDatelineBox && TryParseDatelineQuote(section, pendingMeta.Count > 0, out var tag, out var value))
             {
                 pendingMeta.Add((tag, value));
                 continue;
             }
 
+            allowDatelineBox = false;
             FlushMeta();
             AppendSection(blocks, section);
         }
@@ -118,7 +133,15 @@ public static class MarkdownPagedDocumentMapper
         return blocks;
     }
 
-    static bool TryParseMetadataCallout(IMarkdownSection section, out string tag, out string value)
+    /// <summary>
+    /// Legacy <c>[!tag] value</c>, or plain public mirror once a dateline block has started
+    /// (or the first plain line is a stardate / TK).
+    /// </summary>
+    static bool TryParseDatelineQuote(
+        IMarkdownSection section,
+        bool blockAlreadyStarted,
+        out string tag,
+        out string value)
     {
         tag = string.Empty;
         value = string.Empty;
@@ -130,13 +153,22 @@ public static class MarkdownPagedDocumentMapper
         };
         if (text is null)
             return false;
+        if (text.Length == 0)
+            return blockAlreadyStarted; // blank > spacer only inside an open block
 
         var m = CalloutRegex.Match(text);
-        if (!m.Success)
+        if (m.Success)
+        {
+            tag = m.Groups[1].Value;
+            value = m.Groups[2].Value.Trim();
+            return true;
+        }
+
+        if (!blockAlreadyStarted && !PublicDatelineValueRegex.IsMatch(text))
             return false;
 
-        tag = m.Groups[1].Value;
-        value = m.Groups[2].Value.Trim();
+        tag = "line";
+        value = text;
         return true;
     }
 
