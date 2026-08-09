@@ -77,4 +77,10 @@ public sealed class MarkdownPagedExportOptions
     /// Textbook exports typically set this false.
     /// </summary>
     public bool EnableChapterDatelineBoxes { get; init; } = true;
+
+    /// <summary>When true (typically with textbook chrome), draw a line-number gutter on code panels.</summary>
+    public bool ShowCodeLineNumbers { get; init; }
+
+    /// <summary>When true (typically with textbook chrome), apply lightweight syntax highlighting to fences.</summary>
+    public bool HighlightCode { get; init; }
 }

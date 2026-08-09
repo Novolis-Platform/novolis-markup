@@ -254,12 +254,20 @@ public static class MarkdownPagedDocumentMapper
                 if (!string.IsNullOrWhiteSpace(code.Code))
                 {
                     var lines = code.Code.Replace("\r\n", "\n").TrimEnd().Split('\n');
+                    var language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language;
+                    IReadOnlyList<CodeLine>? styled = null;
+                    if (options.HighlightCode)
+                        styled = CodeSyntaxHighlighter.Highlight(code.Code.Replace("\r\n", "\n").TrimEnd(), language);
+
                     if (options.UseTextbookChrome)
                     {
                         blocks.Add(new CodeBlock
                         {
                             Lines = lines,
-                            Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                            StyledLines = styled,
+                            Language = language,
+                            ShowLineNumbers = options.ShowCodeLineNumbers,
+                            LineNumberColor = DocumentColor.Parse("#6a737d"),
                             Background = CodeFill,
                             BorderStrokePt = 0.6f,
                             BorderColor = CodeBorder,
@@ -275,7 +283,9 @@ public static class MarkdownPagedDocumentMapper
                         blocks.Add(new CodeBlock
                         {
                             Lines = lines,
-                            Language = string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                            StyledLines = styled,
+                            Language = language,
+                            ShowLineNumbers = options.ShowCodeLineNumbers,
                         });
                     }
                 }

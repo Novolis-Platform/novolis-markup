@@ -139,6 +139,8 @@ public sealed class MarkdownDocumentsPdfTests
         {
             UseTextbookChrome = true,
             EnableChapterDatelineBoxes = false,
+            ShowCodeLineNumbers = true,
+            HighlightCode = true,
             Typography = new Typography { CodeFontFamily = "Consolas" },
         });
 
@@ -147,6 +149,31 @@ public sealed class MarkdownDocumentsPdfTests
         await Assert.That(code.AccentBorderLeftPt).IsEqualTo(3f);
         await Assert.That(code.AccentColor).IsEqualTo(DocumentColor.Parse("#4a90e2"));
         await Assert.That(code.Background).IsEqualTo(DocumentColor.Parse("#f8f8f8"));
+        await Assert.That(code.ShowLineNumbers).IsTrue();
+        await Assert.That(code.StyledLines).IsNotNull();
+        await Assert.That(code.StyledLines!.Count).IsEqualTo(1);
+        await Assert.That(code.StyledLines[0].Spans.Any(s =>
+            s.Text.Contains("Console", StringComparison.Ordinal)
+            || s.Color == DocumentColor.Parse("#267f99")
+            || s.Color == DocumentColor.Parse("#0550ae"))).IsTrue();
+    }
+
+    [Test]
+    public async Task Highlighter_colors_csharp_keywords_strings_and_comments()
+    {
+        var lines = CodeSyntaxHighlighter.Highlight(
+            """
+            // note
+            public class Foo { string s = "hi"; }
+            """,
+            "csharp");
+
+        await Assert.That(lines.Count).IsEqualTo(2);
+        await Assert.That(lines[0].Spans[0].Color).IsEqualTo(DocumentColor.Parse("#6a737d"));
+        var joined = string.Concat(lines[1].Spans.Select(s => s.Text));
+        await Assert.That(joined).Contains("public class Foo");
+        await Assert.That(lines[1].Spans.Any(s => s.Text == "public" && s.Color == DocumentColor.Parse("#0550ae"))).IsTrue();
+        await Assert.That(lines[1].Spans.Any(s => s.Text.Contains("\"hi\"", StringComparison.Ordinal) && s.Color == DocumentColor.Parse("#a31515"))).IsTrue();
     }
 
     [Test]
