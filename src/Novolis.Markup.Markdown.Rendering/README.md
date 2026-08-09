@@ -1,10 +1,22 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Markdown.Rendering
 
 Themed HTML document export for Markdown source via `Novolis.Markup.Markdown` (no Markdig).
 
+## Install
+
 ```bash
 dotnet add package Novolis.Markup.Markdown.Rendering
 ```
+
+## Quick start
 
 ```csharp
 using Novolis.Markup.Markdown.Rendering;
@@ -23,3 +35,7 @@ For PDF use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` (Documents.Ski
 | `MarkdownHtmlDocument` | Wrap / FromMarkdown / FromDocument |
 | `MarkdownHtmlExporter` | Write standalone HTML files |
 | `MarkdownHtmlTheme` | StudioDark / GitHubLight / GitHubDark |
+
+## Support
+
+- Docs: [novolis-markup](https://github.com/Novolis-Platform/novolis-markup)
