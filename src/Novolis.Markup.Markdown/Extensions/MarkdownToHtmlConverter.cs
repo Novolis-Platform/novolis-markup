@@ -3,26 +3,33 @@ using Novolis.Markup.Html;
 // ReSharper disable CheckNamespace
 namespace Novolis.Markup.Markdown;
 
+/// <summary>Allows callers to render selected Markdown sections before the built-in HTML conversion handles them.</summary>
+public delegate IHtmlNode? MarkdownHtmlSectionRenderer(IMarkdownSection section);
+
 /// <summary>Converts fluent Markdown documents to HTML via <see cref="HtmlMarkup"/>.</summary>
 public static class MarkdownToHtmlConverter
 {
     /// <summary>Converts a Markdown document to an HTML fragment string.</summary>
-    public static string Convert(IMarkdownDocument document) => ConvertNodes(document).ToString();
+    public static string Convert(IMarkdownDocument document, MarkdownHtmlSectionRenderer? sectionRenderer = null) =>
+        ConvertNodes(document, sectionRenderer).ToString();
 
     /// <summary>Converts a Markdown document to an HTML fragment.</summary>
-    public static HtmlFragment ConvertNodes(IMarkdownDocument document)
+    public static HtmlFragment ConvertNodes(IMarkdownDocument document, MarkdownHtmlSectionRenderer? sectionRenderer = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         var fragment = HtmlMarkup.Fragment();
         foreach (var section in document)
         {
-            fragment.Child(ConvertSection(section));
+            fragment.Child(ConvertSection(section, sectionRenderer));
         }
 
         return fragment;
     }
 
-    private static IHtmlNode? ConvertSection(IMarkdownSection section) => section switch
+    private static IHtmlNode? ConvertSection(IMarkdownSection section, MarkdownHtmlSectionRenderer? sectionRenderer) =>
+        sectionRenderer?.Invoke(section) ?? ConvertBuiltInSection(section);
+
+    private static IHtmlNode? ConvertBuiltInSection(IMarkdownSection section) => section switch
     {
         IMarkdownCodeBlock code => HtmlMarkup.PreCode(code.Code, string.IsNullOrWhiteSpace(code.Language) ? null : code.Language),
         IMarkdownAlert alert => ConvertAlert(alert),
@@ -122,5 +129,4 @@ public static class MarkdownToHtmlConverter
         paragraph.Text(pendingLinkText);
         pendingLinkText = null;
     }
-
 }
