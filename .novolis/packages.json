@@ -65,7 +65,17 @@
         "global.json",
         "Novolis.Markup.slnx"
       ]
+    },
+    "Novolis.Markup.Markdown.Mermaid.Rendering": {
+      "project": "src/Novolis.Markup.Markdown.Mermaid.Rendering/Novolis.Markup.Markdown.Mermaid.Rendering.csproj",
+      "paths": [
+        "src/Novolis.Markup.Markdown.Mermaid.Rendering/**",
+        "tests/Novolis.Markup.Unit/Markdown/MermaidMarkdownHtmlRendererTests.cs",
+        "Directory.Build.props",
+        "Directory.Packages.props",
+        "global.json",
+        "Novolis.Markup.slnx"
+      ]
     }
   }
 }
-

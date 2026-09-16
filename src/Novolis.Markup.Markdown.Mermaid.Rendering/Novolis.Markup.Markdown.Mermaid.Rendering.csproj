@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Novolis.Markup.Markdown.Mermaid.Rendering</PackageId>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>Novolis.Markup.Markdown.Mermaid.Rendering</RootNamespace>
+    <Description>Markdown HTML rendering with headless Mermaid SVG diagrams.</Description>
+    <PackageTags>markdown;mermaid;html;svg;rendering;csharp;dotnet</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Novolis.Markup.Markdown.Rendering\Novolis.Markup.Markdown.Rendering.csproj" />
+    <ProjectReference Include="..\Novolis.Markup.Mermaid.Rendering\Novolis.Markup.Mermaid.Rendering.csproj" />
+  </ItemGroup>
+</Project>
