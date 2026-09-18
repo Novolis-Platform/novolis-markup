@@ -1,3 +1,11 @@
+<!-- novolis-pkg-brand:start -->
+<p align="center">
+  <a href="https://github.com/Novolis-Platform/novolis-markup">
+    <img src="https://raw.githubusercontent.com/Novolis-Platform/.github/main/brand/logo-icon.svg" width="72" alt="Novolis"/>
+  </a>
+</p>
+<!-- novolis-pkg-brand:end -->
+
 # Novolis.Markup.Markdown.Mermaid.Rendering
 
 Headless Mermaid rendering for Markdown HTML output.
@@ -21,3 +29,4 @@ var html = MermaidMarkdownHtmlRenderer.ToHtmlDocument(
 ```
 
 Ordinary fenced code blocks retain the standard Markdown HTML representation. If a Mermaid block cannot be rendered, it falls back to a normal fenced code block instead of producing broken markup.
+

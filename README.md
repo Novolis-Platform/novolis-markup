@@ -41,10 +41,11 @@
 
 | Package | Install | Package README |
 |---------|---------|----------------|
-| `Novolis.Markup.Manuscript` | `dotnet add package Novolis.Markup.Manuscript` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Manuscript/README.md) |
+| `Novolis.Markup.Html` | `dotnet add package Novolis.Markup.Html` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Html/README.md) |
 | `Novolis.Markup.Markdown` | `dotnet add package Novolis.Markup.Markdown` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown/README.md) |
-| `Novolis.Markup.Markdown.Rendering` | `dotnet add package Novolis.Markup.Markdown.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Rendering/README.md) |
 | `Novolis.Markup.Markdown.Documents` | `dotnet add package Novolis.Markup.Markdown.Documents` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Documents/README.md) |
+| `Novolis.Markup.Markdown.Mermaid.Rendering` | `dotnet add package Novolis.Markup.Markdown.Mermaid.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Mermaid.Rendering/README.md) |
+| `Novolis.Markup.Markdown.Rendering` | `dotnet add package Novolis.Markup.Markdown.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Markdown.Rendering/README.md) |
 | `Novolis.Markup.Mermaid` | `dotnet add package Novolis.Markup.Mermaid` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid/README.md) |
 | `Novolis.Markup.Mermaid.Rendering` | `dotnet add package Novolis.Markup.Mermaid.Rendering` | [README](https://github.com/Novolis-Platform/novolis-markup/blob/main/src/Novolis.Markup.Mermaid.Rendering/README.md) |
 
