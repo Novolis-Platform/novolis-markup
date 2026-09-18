@@ -28,6 +28,8 @@ public class NovolisMarkdownRendererTests
         await Assert.That(html).Contains("width=device-width");
         await Assert.That(html).Contains(".mermaid-diagram");
         await Assert.That(html).Contains("overflow-x: auto");
+        await Assert.That(html).Contains(".mermaid-diagram img { display: block; max-width: none; height: auto; }");
+        await Assert.That(html).Contains("white-space: nowrap");
     }
 
     [Test]

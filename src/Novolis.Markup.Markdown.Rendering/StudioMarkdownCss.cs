@@ -71,16 +71,18 @@ internal static class StudioMarkdownCss
         .markdown-body.studio li { margin: 0.2em 0; }
         .markdown-body.studio table {
           border-collapse: collapse;
-          width: 100%;
           margin: 0 0 1em;
           display: block;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
         .markdown-body.studio th,
         .markdown-body.studio td {
           border: 1px solid #444;
           padding: 6px 10px;
           text-align: left;
+          white-space: nowrap;
+          word-break: normal;
         }
         .markdown-body.studio th {
           background: #2d2d30;
@@ -93,7 +95,7 @@ internal static class StudioMarkdownCss
           margin: 1.5em 0;
         }
         .markdown-body.studio img { max-width: 100%; height: auto; border-radius: 4px; }
-        .markdown-body.studio .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; }
-        .markdown-body.studio .mermaid-diagram img { display: block; max-width: 100%; height: auto; }
+        .markdown-body.studio .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .markdown-body.studio .mermaid-diagram img { display: block; max-width: none; height: auto; }
         """;
 }
