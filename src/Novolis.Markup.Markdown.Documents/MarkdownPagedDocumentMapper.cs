@@ -133,11 +133,8 @@ public static class MarkdownPagedDocumentMapper
                 continue;
             }
 
-            if (allowDatelineBox && TryParseDatelineQuote(section, pendingMeta.Count > 0, out var tag, out var value))
-            {
-                pendingMeta.Add((tag, value));
+            if (allowDatelineBox && TryConsumeDatelineQuotes(section, pendingMeta))
                 continue;
-            }
 
             allowDatelineBox = false;
             FlushMeta();
@@ -152,6 +149,32 @@ public static class MarkdownPagedDocumentMapper
     /// Legacy <c>[!tag] value</c>, or plain public mirror once a dateline block has started
     /// (or the first plain line is a stardate / TK).
     /// </summary>
+    static bool TryConsumeDatelineQuotes(IMarkdownSection section, List<(string Tag, string Value)> pendingMeta)
+    {
+        if (section is IMarkdownQuote quote)
+        {
+            var parsed = new List<(string Tag, string Value)>();
+            foreach (var line in quote.Text)
+            {
+                if (!TryParseDatelineQuote(new MarkdownQuote(line), pendingMeta.Count > 0 || parsed.Count > 0, out var tag, out var value))
+                    return false;
+                parsed.Add((tag, value));
+            }
+
+            if (parsed.Count == 0)
+                return false;
+
+            pendingMeta.AddRange(parsed);
+            return true;
+        }
+
+        if (!TryParseDatelineQuote(section, pendingMeta.Count > 0, out var sectionTag, out var sectionValue))
+            return false;
+
+        pendingMeta.Add((sectionTag, sectionValue));
+        return true;
+    }
+
     static bool TryParseDatelineQuote(
         IMarkdownSection section,
         bool blockAlreadyStarted,

@@ -17,7 +17,7 @@ public static class MarkdownHtmlDocument
             MarkdownHtmlTheme.GitHubLight => GithubMarkdownCss.Default,
             MarkdownHtmlTheme.GitHubDark => GithubMarkdownCss.Default + GithubMarkdownCss.Other,
             _ => StudioMarkdownCss.Default,
-        };
+        } + MarkdownViewerCss.Overlay;
 
         var bodyClass = theme is MarkdownHtmlTheme.GitHubLight or MarkdownHtmlTheme.GitHubDark
             ? "markdown-body"
@@ -25,7 +25,7 @@ public static class MarkdownHtmlDocument
 
         return HtmlMarkup.Document(doc =>
         {
-            doc.Lang("en").CharsetUtf8();
+            doc.Lang("en").CharsetUtf8().Viewport();
             if (!string.IsNullOrWhiteSpace(title))
             {
                 doc.Title(title);

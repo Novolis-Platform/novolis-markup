@@ -20,6 +20,7 @@ Published docs: [https://novolis-platform.github.io/.github/novolis-markup/](htt
 | `Novolis.Markup.Markdown` |
 | `Novolis.Markup.Markdown.Documents` |
 | `Novolis.Markup.Markdown.Rendering` |
+| `Novolis.Markup.Markdown.Mermaid.Rendering` |
 | `Novolis.Markup.Mermaid` |
 | `Novolis.Markup.Mermaid.Rendering` |
 

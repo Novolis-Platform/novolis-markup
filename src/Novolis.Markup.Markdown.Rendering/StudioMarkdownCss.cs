@@ -73,6 +73,8 @@ internal static class StudioMarkdownCss
           border-collapse: collapse;
           width: 100%;
           margin: 0 0 1em;
+          display: block;
+          overflow-x: auto;
         }
         .markdown-body.studio th,
         .markdown-body.studio td {
@@ -90,6 +92,8 @@ internal static class StudioMarkdownCss
           border-top: 1px solid #3a3a3a;
           margin: 1.5em 0;
         }
-        .markdown-body.studio img { max-width: 100%; border-radius: 4px; }
+        .markdown-body.studio img { max-width: 100%; height: auto; border-radius: 4px; }
+        .markdown-body.studio .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; }
+        .markdown-body.studio .mermaid-diagram img { display: block; max-width: 100%; height: auto; }
         """;
 }

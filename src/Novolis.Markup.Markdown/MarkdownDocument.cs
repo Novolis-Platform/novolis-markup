@@ -94,23 +94,13 @@ public class MarkdownDocument() : IMarkdownDocument
                 var headerText = header[level..].Trim();
                 document.With(new MarkdownHeader(headerText, level));
                 i++;
-                while (i < lines.Length && lines[i].StartsWith('>'))
-                {
-                    AppendQuoteLine(document, lines[i]);
-                    i++;
-                }
-
+                ConsumeQuoteBlock(document, lines, ref i);
                 continue;
             }
 
             if (lines[i].StartsWith('>'))
             {
-                while (i < lines.Length && lines[i].StartsWith('>'))
-                {
-                    AppendQuoteLine(document, lines[i]);
-                    i++;
-                }
-
+                ConsumeQuoteBlock(document, lines, ref i);
                 continue;
             }
 
@@ -191,10 +181,17 @@ public class MarkdownDocument() : IMarkdownDocument
         return document;
     }
 
-    static void AppendQuoteLine(IMarkdownDocument document, string line)
+    static void ConsumeQuoteBlock(IMarkdownDocument document, string[] lines, ref int i)
     {
-        var body = line[1..].Trim();
-        document.With(new MarkdownQuote(body));
+        var quoteLines = new List<string>();
+        while (i < lines.Length && lines[i].StartsWith('>'))
+        {
+            quoteLines.Add(lines[i][1..].Trim());
+            i++;
+        }
+
+        if (quoteLines.Count > 0)
+            document.With(new MarkdownQuote(string.Join('\n', quoteLines)));
     }
 
     /// <summary>Nest depth from leading spaces (2 spaces or 1 tab ≈ one level).</summary>

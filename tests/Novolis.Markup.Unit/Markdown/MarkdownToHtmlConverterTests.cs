@@ -35,6 +35,30 @@ public sealed class MarkdownToHtmlConverterTests
     }
 
     [Test]
+    public async Task Convert_TableAndQuoteParseInlines()
+    {
+        var html = MarkdownToHtmlConverter.Convert(MarkdownDocument.Parse(
+            "> **Target:** `DocFlow`\n\n| **Name** | `Code` |\n| --- | --- |\n| **Move** | `Blob` |"));
+
+        await Assert.That(html).Contains("<strong>Target:</strong>");
+        await Assert.That(html).Contains("<code>DocFlow</code>");
+        await Assert.That(html).Contains("<strong>Name</strong>");
+        await Assert.That(html).Contains("<code>Code</code>");
+        await Assert.That(html).Contains("<strong>Move</strong>");
+        await Assert.That(html).Contains("<code>Blob</code>");
+        await Assert.That(html).DoesNotContain("**Target:**");
+        await Assert.That(html).DoesNotContain("**Move**");
+    }
+
+    [Test]
+    public async Task Convert_HeaderParsesInlines()
+    {
+        var html = MarkdownToHtmlConverter.Convert(MarkdownDocument.Parse("# Status: **Ready**"));
+        await Assert.That(html).Contains("<h1>");
+        await Assert.That(html).Contains("<strong>Ready</strong>");
+    }
+
+    [Test]
     public async Task Convert_AlertAndCodeBlock()
     {
         var doc = MarkdownDocument.Create(

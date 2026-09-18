@@ -49,6 +49,18 @@ public sealed class MarkdownDocumentParseTests
     }
 
     [Test]
+    public async Task Parse_MergesConsecutiveQuoteLines()
+    {
+        var doc = MarkdownDocument.Parse("> **Target Service:** `DocFlow`\n> **Topic:** Pipeline");
+        var quotes = doc.OfType<IMarkdownQuote>().ToArray();
+        await Assert.That(quotes.Length).IsEqualTo(1);
+        var lines = quotes[0].Text.ToArray();
+        await Assert.That(lines.Length).IsEqualTo(2);
+        await Assert.That(lines[0]).Contains("Target Service");
+        await Assert.That(lines[1]).Contains("Topic");
+    }
+
+    [Test]
     public async Task Parse_Table()
     {
         var md = "| A | B |\n| 1 | 2 |";

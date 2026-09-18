@@ -21,6 +21,16 @@ public class NovolisMarkdownRendererTests
     }
 
     [Test]
+    public async Task FromMarkdown_IncludesViewportAndViewerOverlay()
+    {
+        var html = MarkdownHtmlDocument.FromMarkdown("# Hi", MarkdownHtmlTheme.GitHubLight);
+        await Assert.That(html).Contains("name=\"viewport\"");
+        await Assert.That(html).Contains("width=device-width");
+        await Assert.That(html).Contains(".mermaid-diagram");
+        await Assert.That(html).Contains("overflow-x: auto");
+    }
+
+    [Test]
     public async Task ToHtml_RendersFencedCode()
     {
         var html = NovolisMarkdownRenderer.ToHtml("```csharp\nvar x = 1;\n```");

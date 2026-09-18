@@ -33,15 +33,56 @@ public static class MarkdownToHtmlConverter
     {
         IMarkdownCodeBlock code => HtmlMarkup.PreCode(code.Code, string.IsNullOrWhiteSpace(code.Language) ? null : code.Language),
         IMarkdownAlert alert => ConvertAlert(alert),
-        IMarkdownHeader header => HtmlMarkup.H((int)header.Level, header.Text),
+        IMarkdownHeader header => ConvertHeader(header),
         IMarkdownParagraph paragraph => ConvertParagraph(paragraph),
-        IMarkdownQuote quote => HtmlMarkup.Blockquote(quote.Text),
-        IMarkdownTable table => HtmlMarkup.Table(table.Headers, table.Rows),
+        IMarkdownQuote quote => ConvertQuote(quote),
+        IMarkdownTable table => ConvertTable(table),
         IMarkdownUnorderedList list => ConvertList(HtmlMarkup.Ul(), list.Items),
         IMarkdownOrderedList list => ConvertList(HtmlMarkup.Ol(), list.Items),
         IMarkdownHorizontalRule => HtmlMarkup.Hr(),
         _ => null,
     };
+
+    private static HtmlElement ConvertHeader(IMarkdownHeader header) =>
+        HtmlMarkup.H((int)header.Level, h => AppendInlines(h, MarkdownDocument.ParseInlineParagraph(header.Text)));
+
+    private static HtmlElement ConvertQuote(IMarkdownQuote quote)
+    {
+        return HtmlMarkup.Blockquote(blockquote =>
+        {
+            var first = true;
+            foreach (var line in quote.Text)
+            {
+                if (!first)
+                    blockquote.Br();
+                first = false;
+                AppendInlines(blockquote, MarkdownDocument.ParseInlineParagraph(line));
+            }
+        });
+    }
+
+    private static HtmlElement ConvertTable(IMarkdownTable table)
+    {
+        return HtmlMarkup.Table(markup =>
+        {
+            markup.Thead(thead => thead.Tr(tr =>
+            {
+                foreach (var header in table.Headers)
+                    tr.Th(th => AppendInlines(th, MarkdownDocument.ParseInlineParagraph(header)));
+            }));
+            markup.Tbody(tbody =>
+            {
+                foreach (var row in table.Rows)
+                {
+                    tbody.Tr(tr =>
+                    {
+                        foreach (var cell in row)
+                            tr.Td(td => AppendInlines(td, MarkdownDocument.ParseInlineParagraph(cell)));
+                    });
+                }
+            });
+        });
+    }
 
     private static HtmlElement ConvertAlert(IMarkdownAlert alert)
     {

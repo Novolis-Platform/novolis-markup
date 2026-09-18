@@ -13,7 +13,7 @@ Programmatic construction of **Markdown** and **Mermaid** text without templates
 | `Novolis.Markup.Markdown.Documents` | Markdown → `PagedDocument` / PDF via Documents.Skia |
 | `Novolis.Markup.Mermaid` | Diagram builders (flowchart, sequence, class, state, ER, gantt, mindmap, C4, and more) emitting Mermaid source |
 
-Avalonia UI (`Novolis.Avalonia.Markdown`, `Novolis.Avalonia.Mermaid`) lives in **novolis-avalonia**. Use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` for PDF — not QuestPDF.
+UI hosts (`Novolis.Avalonia.Markdown` / `.Mermaid`, `Novolis.Maui.Markdown` / `.Mermaid`) live in **novolis-avalonia** and **novolis-maui**. Use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` for PDF — not QuestPDF.
 
 There is no shared runtime dependency between Markdown and Mermaid; reference only what you need.
 
