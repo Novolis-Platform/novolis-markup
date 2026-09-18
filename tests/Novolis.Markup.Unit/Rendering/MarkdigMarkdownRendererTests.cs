@@ -30,6 +30,18 @@ public class NovolisMarkdownRendererTests
         await Assert.That(html).Contains("overflow-x: auto");
         await Assert.That(html).Contains(".mermaid-diagram img { display: block; max-width: none; height: auto; }");
         await Assert.That(html).Contains("white-space: nowrap");
+        await Assert.That(html).Contains("data-theme=\"light\"");
+        await Assert.That(html).Contains("color-scheme: light");
+    }
+
+    [Test]
+    public async Task FromMarkdown_GitHubDark_DoesNotRelyOnPrefersColorScheme()
+    {
+        var html = MarkdownHtmlDocument.FromMarkdown("# Hi", MarkdownHtmlTheme.GitHubDark);
+        await Assert.That(html).Contains("data-theme=\"dark\"");
+        await Assert.That(html).Contains("color-scheme: dark");
+        await Assert.That(html).Contains("background: #0d1117");
+        await Assert.That(html).Contains("name=\"color-scheme\"");
     }
 
     [Test]
