@@ -24,5 +24,8 @@ public class XyChartTests
         
         var writer = chart.GetBuilder();
         var result = writer.ToString();
+        await Assert.That(result).Contains("xychart");
+        await Assert.That(result).Contains("title \"Chart 1\"");
+        await Assert.That(result).Contains("line \"Series 1\"");
     }
 }

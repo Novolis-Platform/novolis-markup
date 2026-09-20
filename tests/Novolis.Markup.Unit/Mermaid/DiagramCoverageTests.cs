@@ -125,5 +125,13 @@ public class DiagramCoverageTests
         await Assert.That(new RequirementDiagram()
             .AddRequirement(new RequirementNode("req1", "1", "Must work"))
             .GetMermaidString()).Contains("requirementDiagram");
+        var ishikawa = new IshikawaDiagram("Outage");
+        ishikawa.AddCause("People");
+        await Assert.That(ishikawa.GetMermaidString()).Contains("ishikawa-beta");
+        await Assert.That(new UseCaseDiagram().Actor("User").UseCase("Login").Rel("User", "Login").GetMermaidString()).Contains("usecase-beta");
+        await Assert.That(new WardleyMap().Component("API", 0.5, 0.6).GetMermaidString()).Contains("wardley-beta");
+        await Assert.That(new CynefinDiagram().AddItem(CynefinDomain.Clear, "Restart").GetMermaidString()).Contains("cynefin-beta");
+        await Assert.That(new RailroadDiagram().Rule("digit = \"0\" | \"1\"").GetMermaidString()).Contains("railroad-ebnf-beta");
+        await Assert.That(new EventModelingDiagram().TimeFrame("01", EventModelingEntityType.Event, "Placed").GetMermaidString()).Contains("eventmodeling");
     }
 }

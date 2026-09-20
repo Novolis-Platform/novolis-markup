@@ -72,7 +72,7 @@ public sealed class MarkupCoveragePushTests
         var series = new Series("s1");
         series.Points.Add(new Point(1, 2));
         chart.AddSeries(series);
-        await Assert.That(chart.GetMermaidString()).Contains("xyChart");
+        await Assert.That(chart.GetMermaidString()).Contains("xychart");
 
         var gantt = new Gantt("Plan")
             .WithDateFormat("YYYY-MM-DD")
@@ -228,7 +228,7 @@ public sealed class MarkupCoveragePushTests
         xy.SetXAxis(new Axis("Time"));
         xy.SetYAxis(new Axis("Value"));
         xy.AddSeries([new Series("s")]);
-        await Assert.That(xy.GetBuilder().ToString()).Contains("xyChart");
+        await Assert.That(xy.GetBuilder().ToString()).Contains("xychart");
 
         await Assert.That(new Node("x").GetMermaidString()).IsNotEmpty();
 

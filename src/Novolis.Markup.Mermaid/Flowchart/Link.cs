@@ -20,23 +20,24 @@ public class Link : IMermaidable, IComparable<Link>, IEquatable<Link>
     /// <param name="target">The target node or subgraph.</param>
     /// <param name="label">An optional edge label.</param>
     public Link(IMermaidable source, IMermaidable target, string? label = null)
+        : this(IdOf(source, nameof(source)), IdOf(target, nameof(target)), label)
     {
-        Source = source switch
-        {
-            Node sourceNode => sourceNode.Id.ToString(),
-            Subgraph sourceSubgraph => sourceSubgraph.Label,
-            _ => throw new ArgumentException("Source must be a Node or Subgraph", nameof(source))
-        };
+    }
 
-        Target = target switch
-        {
-            Node targetNode => targetNode.Id.ToString(),
-            Subgraph targetSubgraph => targetSubgraph.Label,
-            _ => throw new ArgumentException("Target must be a Node or Subgraph", nameof(target))
-        };
-
+    /// <summary>Creates a link between two Mermaid node ids.</summary>
+    public Link(string source, string target, string? label = null)
+    {
+        Source = source;
+        Target = target;
         Label = label;
     }
+
+    static string IdOf(IMermaidable element, string paramName) => element switch
+    {
+        Node node => node.NodeId,
+        Subgraph subgraph => subgraph.Label,
+        _ => throw new ArgumentException($"{paramName} must be a Node or Subgraph", paramName),
+    };
 
     /// <summary>Assigns the line style for this link.</summary>
     /// <param name="line">The line style configuration.</param>

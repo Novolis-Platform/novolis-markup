@@ -31,8 +31,9 @@ HTML output uses embedded GitHub-flavored CSS constants (`GithubMarkdownCss`).
 - **`IMermaidable`** — stable `Hash` id plus `GetBuilder()` / `GetMermaidString()`.
 - **`IndentedStringBuilder`** — indentation-aware emission shared by diagram types.
 - **`MermaidDiagramKind`** — catalog of supported diagram families.
-- **Flowchart** — nodes, links, subgraphs, shapes, and direction.
-- Other diagram types (sequence, class, state, ER, gantt, mindmap, C4, …) follow the same builder pattern under their folders.
+- **`MermaidDocument` / `MermaidJson`** — parse Mermaid source (and optional YAML front matter) back into typed builders; JSON is a lossless envelope around that source.
+- **Flowchart** — nodes, links, subgraphs, delimiter shapes, and named shapes (`A@{ shape: docs, label: "…" }`).
+- Other diagram types (sequence, class, state, ER, gantt, mindmap, C4, Ishikawa, use case, Wardley, Cynefin, railroad, event modeling, …) follow the same builder pattern under their folders.
 
 Reflection-based **class diagrams** live in `Novolis.CodeGen.Reflection.ClassDiagram` ([novolis-codegen](https://github.com/Novolis-Platform/novolis-codegen)), not in this repo.
 

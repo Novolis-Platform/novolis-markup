@@ -1,16 +1,11 @@
 namespace Novolis.Markup.Mermaid;
 
-/// <summary>Represents IMermaidable.</summary>
+/// <summary>An object that can emit Mermaid diagram source.</summary>
 public interface IMermaidable
 {
-    /// <summary>
-    /// The unique identifier of the object.
-    /// </summary>
+    /// <summary>Stable identifier for this diagram or node.</summary>
     Hash Id { get; }
-    
-    /// <summary>
-    /// Returns a string representation of the object in Mermaid syntax.
-    /// </summary>
-    /// <returns>a string representation of the object in Mermaid syntax</returns>
+
+    /// <summary>Returns Mermaid syntax for this object.</summary>
     IIndentedStringBuilder GetBuilder();
 }

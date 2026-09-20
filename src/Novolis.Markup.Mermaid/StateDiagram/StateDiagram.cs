@@ -41,6 +41,14 @@ public sealed class StateDiagram : IMermaidable
     {
         _lines.Add($"note {position} of {state}");
         _lines.Add($"  {text}");
+        _lines.Add("end note");
+        return this;
+    }
+
+    /// <summary>Appends a raw stateDiagram statement.</summary>
+    public StateDiagram AddStatement(string statement)
+    {
+        _lines.Add(statement);
         return this;
     }
 

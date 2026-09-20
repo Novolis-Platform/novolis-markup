@@ -69,6 +69,41 @@ public sealed class SequenceDiagram : IMermaidable
         return this;
     }
 
+    /// <summary>Turns on automatic sequence numbers.</summary>
+    public SequenceDiagram Autonumber()
+    {
+        _lines.Add("autonumber");
+        return this;
+    }
+
+    /// <summary>Opens a participant box. Close with <see cref="End"/>.</summary>
+    public SequenceDiagram Box(string title, string? color = null)
+    {
+        _lines.Add(string.IsNullOrWhiteSpace(color) ? $"box {title}" : $"box {color} {title}");
+        return this;
+    }
+
+    /// <summary>Opens a highlighted <c>rect</c> region. Close with <see cref="End"/>.</summary>
+    public SequenceDiagram Rect(string color)
+    {
+        _lines.Add($"rect {color}");
+        return this;
+    }
+
+    /// <summary>Adds a dashed link between two participants (<c>link</c>).</summary>
+    public SequenceDiagram Link(string from, string to)
+    {
+        _lines.Add($"link {from},{to}");
+        return this;
+    }
+
+    /// <summary>Appends a raw statement for advanced syntax or parse round-trip.</summary>
+    public SequenceDiagram AddStatement(string statement)
+    {
+        _lines.Add(statement);
+        return this;
+    }
+
     /// <inheritdoc />
     public IIndentedStringBuilder GetBuilder()
     {

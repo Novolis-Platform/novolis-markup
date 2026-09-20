@@ -58,7 +58,7 @@ public sealed class MermaidExtendedTests
         var text = graph.GetMermaidString();
 
         await Assert.That(text).Contains("gitGraph");
-        await Assert.That(text).Contains("message init");
+        await Assert.That(text).Contains("id: \"init\"");
         await Assert.That(text).Contains("branch feature");
     }
 

@@ -29,6 +29,13 @@ public sealed class BlockDiagram(int columns = 1) : IMermaidable
         return this;
     }
 
+    /// <summary>Appends a raw block statement.</summary>
+    public BlockDiagram AddStatement(string statement)
+    {
+        _lines.Add(statement);
+        return this;
+    }
+
     /// <inheritdoc />
     public IIndentedStringBuilder GetBuilder()
     {

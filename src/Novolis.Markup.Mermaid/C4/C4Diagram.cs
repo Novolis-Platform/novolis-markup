@@ -66,6 +66,50 @@ public sealed class C4Diagram(C4Kind kind, string title) : IMermaidable
         return this;
     }
 
+    /// <summary>Adds a boundary.</summary>
+    public C4Diagram Boundary(string alias, string label)
+    {
+        _lines.Add($"Boundary({alias}, \"{label}\") {{");
+        return this;
+    }
+
+    /// <summary>Closes a boundary block.</summary>
+    public C4Diagram EndBoundary()
+    {
+        _lines.Add("}");
+        return this;
+    }
+
+    /// <summary>Adds an external person.</summary>
+    public C4Diagram Person_Ext(string alias, string label, string? descr = null)
+    {
+        _lines.Add(FormatCall("Person_Ext", alias, label, descr));
+        return this;
+    }
+
+    /// <summary>Adds a database system.</summary>
+    public C4Diagram SystemDb(string alias, string label, string? descr = null)
+    {
+        _lines.Add(FormatCall("SystemDb", alias, label, descr));
+        return this;
+    }
+
+    /// <summary>Adds a reverse Rel.</summary>
+    public C4Diagram Rel_Back(string from, string to, string label, string? technology = null)
+    {
+        _lines.Add(string.IsNullOrWhiteSpace(technology)
+            ? $"Rel_Back({from}, {to}, \"{label}\")"
+            : $"Rel_Back({from}, {to}, \"{label}\", \"{technology}\")");
+        return this;
+    }
+
+    /// <summary>Appends a raw C4 statement.</summary>
+    public C4Diagram AddStatement(string statement)
+    {
+        _lines.Add(statement);
+        return this;
+    }
+
     /// <inheritdoc />
     public IIndentedStringBuilder GetBuilder()
     {

@@ -35,10 +35,20 @@ public sealed class ArchitectureDiagram : IMermaidable
         return this;
     }
 
-    /// <summary>Adds an edge between nodes.</summary>
-    public ArchitectureDiagram Edge(string from, string to, string? label = null)
+    /// <summary>Adds an edge. Optional ports are L/R/T/B; without ports the compact <c>from:to</c> form is used.</summary>
+    public ArchitectureDiagram Edge(string from, string to, string? label = null, string? fromPort = null, string? toPort = null)
     {
-        _lines.Add(string.IsNullOrWhiteSpace(label) ? $"{from}:{to}" : $"{from}:{to} : {label}");
+        var core = !string.IsNullOrWhiteSpace(fromPort) || !string.IsNullOrWhiteSpace(toPort)
+            ? $"{from}:{fromPort ?? "R"} -- {toPort ?? "L"}:{to}"
+            : $"{from}:{to}";
+        _lines.Add(string.IsNullOrWhiteSpace(label) ? core : $"{core} : {label}");
+        return this;
+    }
+
+    /// <summary>Appends a raw architecture statement.</summary>
+    public ArchitectureDiagram AddStatement(string statement)
+    {
+        _lines.Add(statement);
         return this;
     }
 

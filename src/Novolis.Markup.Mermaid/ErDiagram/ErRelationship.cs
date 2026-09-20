@@ -22,16 +22,21 @@ public sealed class ErRelationship(
     string fromCardinality,
     string toCardinality,
     string to,
-    string label) : IMermaidable
+    string label,
+    bool identifying = true) : IMermaidable
 {
     /// <inheritdoc />
     public Hash Id { get; } = Hash.NewHash();
 
+    /// <summary>When true, emits a solid identifying relationship (<c>--</c>); otherwise <c>..</c>.</summary>
+    public bool Identifying { get; } = identifying;
+
     /// <inheritdoc />
     public IIndentedStringBuilder GetBuilder()
     {
+        var connector = Identifying ? "--" : "..";
         var writer = new IndentedStringBuilder();
-        writer.WriteLine("{0} {1}--{2} {3} : {4}", from, fromCardinality, toCardinality, to, label);
+        writer.WriteLine("{0} {1}{2}{3} {4} : {5}", from, fromCardinality, connector, toCardinality, to, label);
         return writer;
     }
 }

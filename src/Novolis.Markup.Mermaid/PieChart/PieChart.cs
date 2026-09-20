@@ -31,7 +31,7 @@ public class PieChart(string title, bool showData = true) : IMermaidable
     public IIndentedStringBuilder GetBuilder()
     {
         var writer = new IndentedStringBuilder();
-        writer.Write("pie {0}", ShowData ? "showData\n" : string.Empty);
+        writer.WriteLine(ShowData ? "pie showData" : "pie");
         writer.WriteLine("title {0}", Title);
         writer.IncreaseIndent();
         foreach (var value in Values)

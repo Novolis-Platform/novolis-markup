@@ -1,11 +1,12 @@
 namespace Novolis.Markup.Mermaid;
 
-/// <summary>Represents Point.</summary>
-public class Point(int x, int y) : IMermaidable
+/// <summary>A 2D chart point. For XY series, <see cref="Y"/> is the plotted value.</summary>
+public class Point(double x, double y) : IMermaidable
 {
-    /// <summary>X.</summary>
+    /// <summary>X (category index or numeric x).</summary>
     public double X { get; } = x;
-    /// <summary>Y.</summary>
+
+    /// <summary>Y (plotted value).</summary>
     public double Y { get; } = y;
 
     /// <inheritdoc />

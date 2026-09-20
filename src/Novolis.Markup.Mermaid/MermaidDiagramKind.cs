@@ -74,4 +74,22 @@ public enum MermaidDiagramKind
 
     /// <summary>Tree view.</summary>
     TreeView,
+
+    /// <summary>Ishikawa / fishbone (cause-and-effect) diagram.</summary>
+    Ishikawa,
+
+    /// <summary>UML use case diagram.</summary>
+    UseCase,
+
+    /// <summary>Wardley map.</summary>
+    Wardley,
+
+    /// <summary>Cynefin sense-making framework.</summary>
+    Cynefin,
+
+    /// <summary>Railroad / syntax diagram (EBNF, ABNF, PEG, or IR).</summary>
+    Railroad,
+
+    /// <summary>Event modeling timeline.</summary>
+    EventModeling,
 }

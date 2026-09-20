@@ -1,12 +1,26 @@
 namespace Novolis.Markup.Mermaid;
 
-/// <summary>Represents Series.</summary>
-public class Series(string name) : IMermaidable
+/// <summary>XY chart series kind.</summary>
+public enum XySeriesKind
 {
-    /// <summary>Name.</summary>
+    /// <summary><c>line</c> plot.</summary>
+    Line,
+
+    /// <summary><c>bar</c> plot.</summary>
+    Bar,
+}
+
+/// <summary>A named line or bar series on an XY chart.</summary>
+public class Series(string name, XySeriesKind kind = XySeriesKind.Line) : IMermaidable
+{
+    /// <summary>Legend name.</summary>
     public string Name { get; } = name;
-    /// <summary>Points.</summary>
-    public List<Point> Points { get; } = new();
+
+    /// <summary>Plot kind.</summary>
+    public XySeriesKind Kind { get; } = kind;
+
+    /// <summary>Data points. Y values are plotted in order; X is the category index unless a numeric x-axis is used.</summary>
+    public List<Point> Points { get; } = [];
 
     /// <inheritdoc />
     public Hash Id { get; } = Hash.NewHash();
@@ -15,15 +29,16 @@ public class Series(string name) : IMermaidable
     public IIndentedStringBuilder GetBuilder()
     {
         var writer = new IndentedStringBuilder();
-        writer.WriteLine("series {0}", Name);
-        writer.IncreaseIndent();
-        foreach (var point in Points)
-        {
-            writer.WriteLine(point.GetBuilder());
-        }
-        
-        writer.DecreaseIndent();
-        
+        writer.WriteLine(Format());
         return writer;
+    }
+
+    internal string Format()
+    {
+        var keyword = Kind == XySeriesKind.Bar ? "bar" : "line";
+        var values = string.Join(", ", Points.Select(p => p.Y.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+        return string.IsNullOrWhiteSpace(Name)
+            ? $"{keyword} [{values}]"
+            : $"{keyword} \"{Name}\" [{values}]";
     }
 }

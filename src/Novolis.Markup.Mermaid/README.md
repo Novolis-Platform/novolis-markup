@@ -36,7 +36,7 @@ dotnet add package Novolis.Markup.Mermaid
 | `Mindmap` | `mindmap` |
 | `Timeline` | `timeline` |
 | `Sankey` | `sankey-beta` |
-| `XyChart` | `xychart-beta` |
+| `XyChart` | `xychart` |
 | `BlockDiagram` | `block-beta` |
 | `ArchitectureDiagram` | `architecture-beta` |
 | `C4Diagram` | `C4Context` / `C4Container` / … |
@@ -46,8 +46,34 @@ dotnet add package Novolis.Markup.Mermaid
 | `Kanban` | `kanban` |
 | `VennDiagram` | `venn-beta` |
 | `TreeView` | `treeView` |
+| `IshikawaDiagram` | `ishikawa-beta` |
+| `UseCaseDiagram` | `usecase-beta` |
+| `WardleyMap` | `wardley-beta` |
+| `CynefinDiagram` | `cynefin-beta` |
+| `RailroadDiagram` | `railroad-ebnf-beta` / `railroad-abnf-beta` / `railroad-peg-beta` / `railroad-beta` |
+| `EventModelingDiagram` | `eventmodeling` |
 
 See `MermaidDiagramKind` for the catalog enum.
+
+## Serialize and parse
+
+Mermaid source is the canonical form. `MermaidDocument` reconstructs a typed builder (or a lossless `RawMermaidDiagram` fallback). `MermaidJson` wraps the same source in a JSON envelope.
+
+```csharp
+using Novolis.Markup.Mermaid;
+
+var source = """
+    flowchart LR
+        A[Start] --> B([Done])
+    """;
+
+MermaidDocument doc = MermaidDocument.Parse(source);
+string mermaid = doc.ToMermaidString();
+string json = MermaidJson.Serialize(doc);
+MermaidDocument again = MermaidJson.Deserialize(json);
+```
+
+Front matter (`title`, `theme`, `look`, `layout`) is preserved when present. `MermaidKindDetector.TryDetect` maps a header token (`xychart`, `ishikawa-beta`, `C4Context`, …) onto `MermaidDiagramKind`.
 
 ## Quick start
 
