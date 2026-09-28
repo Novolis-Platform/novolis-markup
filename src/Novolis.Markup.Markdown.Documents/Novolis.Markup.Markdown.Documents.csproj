@@ -7,10 +7,10 @@
     <PackageTags>markdown;pdf;documents;skia;export;csharp;dotnet</PackageTags>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Novolis.Documents" />
-    <PackageReference Include="Novolis.Documents.Layout" />
-    <PackageReference Include="Novolis.Documents.Skia" />
-    <PackageReference Include="Novolis.Math.Measure" />
+    <LibraryReference Include="Novolis.Documents" />
+    <LibraryReference Include="Novolis.Documents.Layout" />
+    <LibraryReference Include="Novolis.Documents.Skia" />
+    <LibraryReference Include="Novolis.Math.Measure" />
     <PackageReference Include="SkiaSharp" />
     <PackageReference Include="SkiaSharp.NativeAssets.Win32" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" />
