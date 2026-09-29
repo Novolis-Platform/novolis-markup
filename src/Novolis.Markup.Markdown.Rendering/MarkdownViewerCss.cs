@@ -8,6 +8,9 @@ internal static class MarkdownViewerCss
         img { max-width: 100%; height: auto; }
         table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         th, td { white-space: nowrap; word-break: normal; }
+        ul.contains-task-list { list-style: none; padding-left: 1.5em; }
+        .task-list-item { list-style: none; }
+        .task-list-item-checkbox { margin: 0 .35em .25em -1.4em; vertical-align: middle; }
         .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .mermaid-diagram img { display: block; max-width: none; height: auto; }
         """;

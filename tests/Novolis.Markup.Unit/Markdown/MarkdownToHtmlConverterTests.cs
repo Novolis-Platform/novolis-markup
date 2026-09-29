@@ -59,6 +59,21 @@ public sealed class MarkdownToHtmlConverterTests
     }
 
     [Test]
+    public async Task Convert_TaskMarkers_RendersCheckboxesWithState()
+    {
+        var html = MarkdownToHtmlConverter.Convert(MarkdownDocument.Parse(
+            "- [] Empty marker\n- [ ] Open item\n- [x] Lowercase complete\n- [X] Uppercase complete"));
+
+        await Assert.That(html).Contains("contains-task-list");
+        await Assert.That(html).Contains("task-list-item-checkbox");
+        await Assert.That(html).Contains("aria-label=\"Not completed\"");
+        await Assert.That(html).Contains("aria-label=\"Completed\"");
+        await Assert.That(html).Contains("checked");
+        await Assert.That(html).Contains("Empty marker");
+        await Assert.That(html).Contains("Uppercase complete");
+    }
+
+    [Test]
     public async Task Convert_AlertAndCodeBlock()
     {
         var doc = MarkdownDocument.Create(

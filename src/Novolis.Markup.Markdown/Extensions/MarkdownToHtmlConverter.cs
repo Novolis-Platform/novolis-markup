@@ -93,14 +93,66 @@ public static class MarkdownToHtmlConverter
 
     private static HtmlElement ConvertList(HtmlElement list, IEnumerable<string> items)
     {
-        foreach (var item in items)
+        var decodedItems = items
+            .Select(item =>
+            {
+                MarkdownDocument.DecodeNestDepth(item, out var body);
+                return body;
+            })
+            .ToArray();
+
+        if (decodedItems.Any(HasTaskMarker))
+            list.Class("contains-task-list");
+
+        foreach (var body in decodedItems)
         {
-            MarkdownDocument.DecodeNestDepth(item, out var body);
-            var paragraph = MarkdownDocument.ParseInlineParagraph(body);
-            list.Li(li => AppendInlines(li, paragraph));
+            list.Li(li =>
+            {
+                if (TryReadTaskMarker(body, out var isChecked, out var taskBody))
+                {
+                    li.Class("task-list-item");
+                    var checkbox = li.Input(input => input
+                        .Type("checkbox")
+                        .Class("task-list-item-checkbox")
+                        .Attr("disabled")
+                        .Attr("aria-label", isChecked ? "Completed" : "Not completed"));
+                    if (isChecked)
+                        checkbox.Attr("checked");
+                    li.Text(" ");
+                    AppendInlines(li, MarkdownDocument.ParseInlineParagraph(taskBody));
+                    return;
+                }
+
+                AppendInlines(li, MarkdownDocument.ParseInlineParagraph(body));
+            });
         }
 
         return list;
+    }
+
+    private static bool HasTaskMarker(string body) =>
+        TryReadTaskMarker(body, out _, out _);
+
+    private static bool TryReadTaskMarker(string body, out bool isChecked, out string taskBody)
+    {
+        isChecked = false;
+        taskBody = body;
+
+        if (body.StartsWith("[]", StringComparison.Ordinal))
+        {
+            taskBody = body[2..].TrimStart();
+            return true;
+        }
+
+        if (body.Length < 3 || body[0] != '[' || body[2] != ']')
+            return false;
+
+        if (body[1] is not (' ' or 'x' or 'X'))
+            return false;
+
+        isChecked = body[1] is 'x' or 'X';
+        taskBody = body[3..].TrimStart();
+        return true;
     }
 
     private static HtmlElement ConvertParagraph(IMarkdownParagraph paragraph)
