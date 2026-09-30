@@ -1,15 +1,5 @@
 namespace Novolis.Markup.Mermaid;
 
-/// <summary>XY chart series kind.</summary>
-public enum XySeriesKind
-{
-    /// <summary><c>line</c> plot.</summary>
-    Line,
-
-    /// <summary><c>bar</c> plot.</summary>
-    Bar,
-}
-
 /// <summary>A named line or bar series on an XY chart.</summary>
 public class Series(string name, XySeriesKind kind = XySeriesKind.Line) : IMermaidable
 {

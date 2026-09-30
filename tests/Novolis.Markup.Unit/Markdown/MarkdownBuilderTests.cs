@@ -588,8 +588,3 @@ public class MarkdownDocumentTests
         await Assert.That(enumerator.MoveNext()).IsFalse();
     }
 }
-
-class MarkdownSectionExample : IMarkdownSection
-{
-    public override string ToString() => "Example";
-}
