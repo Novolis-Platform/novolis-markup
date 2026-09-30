@@ -9,6 +9,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Mermaider" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="Svg.Skia" />
     <ProjectReference Include="..\Novolis.Markup.Mermaid\Novolis.Markup.Mermaid.csproj" />
   </ItemGroup>
