@@ -52,4 +52,28 @@ public sealed class MermaidMarkdownHtmlRendererTests
         await Assert.That(html).Contains("language-mermaid");
         await Assert.That(html).Contains("definitely not valid mermaid");
     }
+
+    [Test]
+    public async Task Build_AddsCopyAndFullscreenChrome()
+    {
+        const string markdown = """
+            ```csharp
+            var answer = 42;
+            ```
+
+            ```mermaid
+            flowchart LR
+                A --> B
+            ```
+            """;
+
+        var built = MermaidMarkdownHtmlRenderer.Build(markdown);
+
+        await Assert.That(built.Document).Contains("code-block-copy");
+        await Assert.That(built.Document).Contains("novolis-md://copy/0");
+        await Assert.That(built.Document).Contains("media-preview-open");
+        await Assert.That(built.Document).Contains("novolis-md://preview/0");
+        await Assert.That(built.Actions.CodeBlocks[0]).Contains("var answer = 42;");
+        await Assert.That(built.Actions.Previews[0].DataUri).StartsWith("data:image/svg+xml;base64,");
+    }
 }

@@ -261,6 +261,17 @@ public class MarkdownDocument() : IMarkdownDocument
                 continue;
             }
 
+            if (text[i] == '!'
+                && i + 1 < text.Length
+                && text[i + 1] == '['
+                && TryReadLink(text, i + 1, out var imageAlt, out var imageUrl, out var afterImage))
+            {
+                FlushText();
+                paragraph.WithImage(imageAlt, imageUrl);
+                i = afterImage;
+                continue;
+            }
+
             if (text[i] == '[' && TryReadLink(text, i, out var label, out var url, out var afterLink))
             {
                 FlushText();

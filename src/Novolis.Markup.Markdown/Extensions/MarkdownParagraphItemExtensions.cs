@@ -17,6 +17,8 @@ internal static class MarkdownParagraphItemExtensions
             MarkdownParagraphItemType.Code => "`",
             MarkdownParagraphItemType.Indent => "",
             MarkdownParagraphItemType.NewLine => "",
+            MarkdownParagraphItemType.ImageAlt => "![",
+            MarkdownParagraphItemType.Image => "(",
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -35,6 +37,8 @@ internal static class MarkdownParagraphItemExtensions
             MarkdownParagraphItemType.Code => "`",
             MarkdownParagraphItemType.Indent => "",
             MarkdownParagraphItemType.NewLine => "",
+            MarkdownParagraphItemType.ImageAlt => "]",
+            MarkdownParagraphItemType.Image => ")",
             _ => throw new ArgumentOutOfRangeException()
         };
     }

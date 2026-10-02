@@ -27,6 +27,17 @@ public class MarkdownParagraph : IMarkdownParagraph
         return this;
     }
 
+    /// <summary>Appends a Markdown image.</summary>
+    /// <param name="alt">Alternate text.</param>
+    /// <param name="url">Image source.</param>
+    /// <returns>This paragraph for chaining.</returns>
+    public IMarkdownParagraph WithImage(string alt, string url)
+    {
+        _items.Add(new MarkdownParagraphItem(alt, MarkdownParagraphItemType.ImageAlt));
+        _items.Add(new MarkdownParagraphItem(url, MarkdownParagraphItemType.Image));
+        return this;
+    }
+
     /// <summary>Appends a hyperlink.</summary>
     /// <param name="text">The link label.</param>
     /// <param name="url">The link target URL.</param>

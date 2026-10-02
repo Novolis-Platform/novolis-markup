@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Mermaider;
 using Mermaider.Models;
 
@@ -6,21 +7,40 @@ namespace Novolis.Markup.Mermaid.Rendering;
 /// <summary>Renders Mermaid source to SVG using Mermaider (no browser).</summary>
 public static class MermaidSvgRenderer
 {
+    private const int CacheLimit = 64;
+    private static readonly ConcurrentDictionary<(string Mermaid, MermaidRenderTheme Theme), string?> Cache = new();
+
     /// <summary>Renders Mermaid source to an SVG document string, or <c>null</c> on failure.</summary>
     public static string? TryRenderSvg(string? mermaid, MermaidRenderTheme theme = MermaidRenderTheme.StudioDark)
     {
         if (string.IsNullOrWhiteSpace(mermaid))
             return null;
 
+        var key = (mermaid.Trim(), theme);
+        if (Cache.TryGetValue(key, out var cached))
+            return cached;
+
         try
         {
-            var svg = MermaidRenderer.RenderSvg(mermaid.Trim(), OptionsFor(theme));
-            return string.IsNullOrWhiteSpace(svg) ? null : svg;
+            var svg = MermaidRenderer.RenderSvg(key.Item1, OptionsFor(theme));
+            var result = string.IsNullOrWhiteSpace(svg) ? null : svg;
+            Remember(key, result);
+            return result;
         }
         catch
         {
+            Remember(key, null);
             return null;
         }
+    }
+
+    private static void Remember((string Mermaid, MermaidRenderTheme Theme) key, string? svg)
+    {
+        Cache[key] = svg;
+        if (Cache.Count <= CacheLimit)
+            return;
+        foreach (var stale in Cache.Keys.Take(Cache.Count - CacheLimit))
+            Cache.TryRemove(stale, out _);
     }
 
     /// <summary>Maps a theme to Mermaider render options.</summary>

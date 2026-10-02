@@ -23,5 +23,11 @@ public enum MarkdownParagraphItemType
     /// <summary>Underline.</summary>
     Underline,
     /// <summary>LinkText.</summary>
-    LinkText
+    LinkText,
+
+    /// <summary>Image alternate text preceding <see cref="Image"/>.</summary>
+    ImageAlt,
+
+    /// <summary>Image source URL.</summary>
+    Image
 }

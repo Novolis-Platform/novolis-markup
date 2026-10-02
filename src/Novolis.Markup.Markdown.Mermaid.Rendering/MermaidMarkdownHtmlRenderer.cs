@@ -1,5 +1,6 @@
 using System.Text;
 using Novolis.Markup.Html;
+using Novolis.Markup.Markdown;
 using Novolis.Markup.Markdown.Rendering;
 using Novolis.Markup.Mermaid.Rendering;
 
@@ -9,14 +10,18 @@ namespace Novolis.Markup.Markdown.Mermaid.Rendering;
 public static class MermaidMarkdownHtmlRenderer
 {
     /// <summary>Converts Markdown to an HTML body fragment with Mermaid diagrams rendered to SVG.</summary>
-    public static string ToHtml(string markdown, MermaidRenderTheme theme = MermaidRenderTheme.StudioDark)
+    public static string ToHtml(
+        string markdown,
+        MermaidRenderTheme theme = MermaidRenderTheme.StudioDark,
+        MarkdownHtmlActionSink? actions = null)
     {
         if (string.IsNullOrEmpty(markdown))
             return "<p></p>";
 
         return MarkdownToHtmlConverter.Convert(
             MarkdownDocument.Parse(markdown),
-            section => RenderSection(section, theme));
+            section => RenderSection(section, theme, actions),
+            actions);
     }
 
     /// <summary>Creates a full themed HTML document with Mermaid diagrams rendered to SVG.</summary>
@@ -24,13 +29,26 @@ public static class MermaidMarkdownHtmlRenderer
         string markdown,
         MarkdownHtmlTheme htmlTheme = MarkdownHtmlTheme.StudioDark,
         MermaidRenderTheme mermaidTheme = MermaidRenderTheme.StudioDark,
-        string? title = null)
+        string? title = null) =>
+        Build(markdown, htmlTheme, mermaidTheme, title).Document;
+
+    /// <summary>Creates themed HTML plus copy/preview payloads for a host viewer.</summary>
+    public static MarkdownHtmlDocumentBuild Build(
+        string markdown,
+        MarkdownHtmlTheme htmlTheme = MarkdownHtmlTheme.StudioDark,
+        MermaidRenderTheme mermaidTheme = MermaidRenderTheme.StudioDark,
+        string? title = null,
+        string? sourceDirectory = null)
     {
-        var body = ToHtml(markdown, mermaidTheme);
-        return MarkdownHtmlDocument.Wrap(body, htmlTheme, title);
+        var actions = new MarkdownHtmlActionSink { SourceDirectory = sourceDirectory };
+        var body = ToHtml(markdown, mermaidTheme, actions);
+        return new MarkdownHtmlDocumentBuild(MarkdownHtmlDocument.Wrap(body, htmlTheme, title), actions);
     }
 
-    private static IHtmlNode? RenderSection(IMarkdownSection section, MermaidRenderTheme theme)
+    private static IHtmlNode? RenderSection(
+        IMarkdownSection section,
+        MermaidRenderTheme theme,
+        MarkdownHtmlActionSink? actions)
     {
         if (section is not IMarkdownCodeBlock code
             || !string.Equals(code.Language, "mermaid", StringComparison.OrdinalIgnoreCase))
@@ -42,6 +60,8 @@ public static class MermaidMarkdownHtmlRenderer
 
         var bytes = Encoding.UTF8.GetBytes(svg);
         var source = $"data:image/svg+xml;base64,{Convert.ToBase64String(bytes)}";
+        if (actions is not null)
+            return MarkdownHtmlChrome.Media(source, "Mermaid diagram", actions, "mermaid-diagram");
 
         return HtmlMarkup.Div(div => div
             .Class("mermaid-diagram")

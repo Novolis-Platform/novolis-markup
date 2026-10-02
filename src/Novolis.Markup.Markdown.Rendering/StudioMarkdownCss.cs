@@ -97,5 +97,7 @@ internal static class StudioMarkdownCss
         .markdown-body.studio img { max-width: 100%; height: auto; border-radius: 4px; }
         .markdown-body.studio .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .markdown-body.studio .mermaid-diagram img { display: block; max-width: none; height: auto; }
+        .markdown-body.studio .code-block-copy,
+        .markdown-body.studio .media-preview-open { border-color: #3a3a3a; color: #e8e8e8; }
         """;
 }

@@ -13,6 +13,14 @@ internal static class MarkdownViewerCss
         .task-list-item-checkbox { margin: 0 .35em .25em -1.4em; vertical-align: middle; }
         .mermaid-diagram { margin: 0 0 1.2em; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .mermaid-diagram img { display: block; max-width: none; height: auto; }
+        .code-block { position: relative; margin: 0 0 1.2em; }
+        .code-block-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0 0 .35em; font-size: 12px; }
+        .code-block-lang { opacity: .7; text-transform: lowercase; }
+        .code-block-copy, .media-preview-open { color: inherit; text-decoration: none; border: 1px solid currentColor; border-radius: 999px; padding: .15em .7em; font-size: 12px; }
+        .code-block pre { margin: 0; }
+        .media-preview { position: relative; margin: 0 0 1.2em; }
+        .media-preview-open { display: inline-block; margin: 0 0 .45em; }
+        .markdown-image img { max-width: 100%; height: auto; }
         """;
 
     /// <summary>

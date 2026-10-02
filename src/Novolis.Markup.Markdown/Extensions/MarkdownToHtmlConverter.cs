@@ -7,43 +7,57 @@ namespace Novolis.Markup.Markdown;
 public static class MarkdownToHtmlConverter
 {
     /// <summary>Converts a Markdown document to an HTML fragment string.</summary>
-    public static string Convert(IMarkdownDocument document, MarkdownHtmlSectionRenderer? sectionRenderer = null) =>
-        ConvertNodes(document, sectionRenderer).ToString();
+    public static string Convert(
+        IMarkdownDocument document,
+        MarkdownHtmlSectionRenderer? sectionRenderer = null,
+        MarkdownHtmlActionSink? actions = null) =>
+        ConvertNodes(document, sectionRenderer, actions).ToString();
 
     /// <summary>Converts a Markdown document to an HTML fragment.</summary>
-    public static HtmlFragment ConvertNodes(IMarkdownDocument document, MarkdownHtmlSectionRenderer? sectionRenderer = null)
+    public static HtmlFragment ConvertNodes(
+        IMarkdownDocument document,
+        MarkdownHtmlSectionRenderer? sectionRenderer = null,
+        MarkdownHtmlActionSink? actions = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         var fragment = HtmlMarkup.Fragment();
         foreach (var section in document)
         {
-            fragment.Child(ConvertSection(section, sectionRenderer));
+            fragment.Child(ConvertSection(section, sectionRenderer, actions));
         }
 
         return fragment;
     }
 
-    private static IHtmlNode? ConvertSection(IMarkdownSection section, MarkdownHtmlSectionRenderer? sectionRenderer) =>
-        sectionRenderer?.Invoke(section) ?? ConvertBuiltInSection(section);
+    private static IHtmlNode? ConvertSection(
+        IMarkdownSection section,
+        MarkdownHtmlSectionRenderer? sectionRenderer,
+        MarkdownHtmlActionSink? actions) =>
+        sectionRenderer?.Invoke(section) ?? ConvertBuiltInSection(section, actions);
 
-    private static IHtmlNode? ConvertBuiltInSection(IMarkdownSection section) => section switch
+    private static IHtmlNode? ConvertBuiltInSection(IMarkdownSection section, MarkdownHtmlActionSink? actions) => section switch
     {
-        IMarkdownCodeBlock code => HtmlMarkup.PreCode(code.Code, string.IsNullOrWhiteSpace(code.Language) ? null : code.Language),
+        IMarkdownCodeBlock code => actions is null
+            ? HtmlMarkup.PreCode(code.Code, string.IsNullOrWhiteSpace(code.Language) ? null : code.Language)
+            : MarkdownHtmlChrome.CodeBlock(
+                code.Code,
+                string.IsNullOrWhiteSpace(code.Language) ? null : code.Language,
+                actions),
         IMarkdownAlert alert => ConvertAlert(alert),
-        IMarkdownHeader header => ConvertHeader(header),
-        IMarkdownParagraph paragraph => ConvertParagraph(paragraph),
-        IMarkdownQuote quote => ConvertQuote(quote),
-        IMarkdownTable table => ConvertTable(table),
-        IMarkdownUnorderedList list => ConvertList(HtmlMarkup.Ul(), list.Items),
-        IMarkdownOrderedList list => ConvertList(HtmlMarkup.Ol(), list.Items),
+        IMarkdownHeader header => ConvertHeader(header, actions),
+        IMarkdownParagraph paragraph => ConvertParagraph(paragraph, actions),
+        IMarkdownQuote quote => ConvertQuote(quote, actions),
+        IMarkdownTable table => ConvertTable(table, actions),
+        IMarkdownUnorderedList list => ConvertList(HtmlMarkup.Ul(), list.Items, actions),
+        IMarkdownOrderedList list => ConvertList(HtmlMarkup.Ol(), list.Items, actions),
         IMarkdownHorizontalRule => HtmlMarkup.Hr(),
         _ => null,
     };
 
-    private static HtmlElement ConvertHeader(IMarkdownHeader header) =>
-        HtmlMarkup.H((int)header.Level, h => AppendInlines(h, MarkdownDocument.ParseInlineParagraph(header.Text)));
+    private static HtmlElement ConvertHeader(IMarkdownHeader header, MarkdownHtmlActionSink? actions) =>
+        HtmlMarkup.H((int)header.Level, h => AppendInlines(h, MarkdownDocument.ParseInlineParagraph(header.Text), actions));
 
-    private static HtmlElement ConvertQuote(IMarkdownQuote quote)
+    private static HtmlElement ConvertQuote(IMarkdownQuote quote, MarkdownHtmlActionSink? actions)
     {
         return HtmlMarkup.Blockquote(blockquote =>
         {
@@ -53,19 +67,19 @@ public static class MarkdownToHtmlConverter
                 if (!first)
                     blockquote.Br();
                 first = false;
-                AppendInlines(blockquote, MarkdownDocument.ParseInlineParagraph(line));
+                AppendInlines(blockquote, MarkdownDocument.ParseInlineParagraph(line), actions);
             }
         });
     }
 
-    private static HtmlElement ConvertTable(IMarkdownTable table)
+    private static HtmlElement ConvertTable(IMarkdownTable table, MarkdownHtmlActionSink? actions)
     {
         return HtmlMarkup.Table(markup =>
         {
             markup.Thead(thead => thead.Tr(tr =>
             {
                 foreach (var header in table.Headers)
-                    tr.Th(th => AppendInlines(th, MarkdownDocument.ParseInlineParagraph(header)));
+                    tr.Th(th => AppendInlines(th, MarkdownDocument.ParseInlineParagraph(header), actions));
             }));
             markup.Tbody(tbody =>
             {
@@ -74,7 +88,7 @@ public static class MarkdownToHtmlConverter
                     tbody.Tr(tr =>
                     {
                         foreach (var cell in row)
-                            tr.Td(td => AppendInlines(td, MarkdownDocument.ParseInlineParagraph(cell)));
+                            tr.Td(td => AppendInlines(td, MarkdownDocument.ParseInlineParagraph(cell), actions));
                     });
                 }
             });
@@ -88,7 +102,7 @@ public static class MarkdownToHtmlConverter
         return HtmlMarkup.Alert(level, text);
     }
 
-    private static HtmlElement ConvertList(HtmlElement list, IEnumerable<string> items)
+    private static HtmlElement ConvertList(HtmlElement list, IEnumerable<string> items, MarkdownHtmlActionSink? actions)
     {
         var decodedItems = items
             .Select(item =>
@@ -116,11 +130,11 @@ public static class MarkdownToHtmlConverter
                     if (isChecked)
                         checkbox.Attr("checked");
                     li.Text(" ");
-                    AppendInlines(li, MarkdownDocument.ParseInlineParagraph(taskBody));
+                    AppendInlines(li, MarkdownDocument.ParseInlineParagraph(taskBody), actions);
                     return;
                 }
 
-                AppendInlines(li, MarkdownDocument.ParseInlineParagraph(body));
+                AppendInlines(li, MarkdownDocument.ParseInlineParagraph(body), actions);
             });
         }
 
@@ -152,16 +166,17 @@ public static class MarkdownToHtmlConverter
         return true;
     }
 
-    private static HtmlElement ConvertParagraph(IMarkdownParagraph paragraph)
+    private static HtmlElement ConvertParagraph(IMarkdownParagraph paragraph, MarkdownHtmlActionSink? actions)
     {
         var p = HtmlMarkup.P();
-        AppendInlines(p, paragraph);
+        AppendInlines(p, paragraph, actions);
         return p;
     }
 
-    private static void AppendInlines(HtmlElement host, IMarkdownParagraph paragraph)
+    private static void AppendInlines(HtmlElement host, IMarkdownParagraph paragraph, MarkdownHtmlActionSink? actions)
     {
         string? pendingLinkText = null;
+        string? pendingImageAlt = null;
 
         foreach (var inline in paragraph.Items)
         {
@@ -170,53 +185,87 @@ public static class MarkdownToHtmlConverter
                 case MarkdownParagraphItemType.Text:
                 case MarkdownParagraphItemType.Indent:
                 case MarkdownParagraphItemType.NewLine:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Text(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Bold:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Strong(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Italic:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Em(inline.Text);
                     break;
                 case MarkdownParagraphItemType.Strikethrough:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Child(HtmlMarkup.Del(inline.Text));
                     break;
                 case MarkdownParagraphItemType.Underline:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Child(HtmlMarkup.U(inline.Text));
                     break;
                 case MarkdownParagraphItemType.Code:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     host.Code(inline.Text);
                     break;
                 case MarkdownParagraphItemType.LinkText:
-                    FlushPendingLink(host, ref pendingLinkText);
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
                     pendingLinkText = inline.Text;
                     break;
                 case MarkdownParagraphItemType.Link:
                     host.Child(HtmlMarkup.A(inline.Text, pendingLinkText ?? string.Empty));
                     pendingLinkText = null;
                     break;
+                case MarkdownParagraphItemType.ImageAlt:
+                    FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
+                    pendingImageAlt = inline.Text;
+                    break;
+                case MarkdownParagraphItemType.Image:
+                    AppendImage(host, pendingImageAlt ?? string.Empty, inline.Text, actions);
+                    pendingImageAlt = null;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(paragraph), inline.Type, "Unknown paragraph item type.");
             }
         }
 
-        FlushPendingLink(host, ref pendingLinkText);
+        FlushPending(host, ref pendingLinkText, ref pendingImageAlt);
     }
 
-    private static void FlushPendingLink(HtmlElement paragraph, ref string? pendingLinkText)
+    private static void AppendImage(
+        HtmlElement host,
+        string alt,
+        string url,
+        MarkdownHtmlActionSink? actions)
     {
-        if (pendingLinkText is null)
+        var embedded = MarkdownLocalImage.TryEmbed(url, actions?.SourceDirectory);
+        if (embedded is not null && actions is not null)
         {
+            host.Child(MarkdownHtmlChrome.Media(embedded, string.IsNullOrWhiteSpace(alt) ? "Image" : alt, actions, "markdown-image"));
             return;
         }
 
-        paragraph.Text(pendingLinkText);
-        pendingLinkText = null;
+        if (embedded is not null)
+        {
+            host.Img(embedded, alt);
+            return;
+        }
+
+        host.Child(HtmlMarkup.A(url, string.IsNullOrWhiteSpace(alt) ? url : alt));
+    }
+
+    private static void FlushPending(HtmlElement paragraph, ref string? pendingLinkText, ref string? pendingImageAlt)
+    {
+        if (pendingLinkText is not null)
+        {
+            paragraph.Text(pendingLinkText);
+            pendingLinkText = null;
+        }
+
+        if (pendingImageAlt is not null)
+        {
+            paragraph.Text(pendingImageAlt);
+            pendingImageAlt = null;
+        }
     }
 }
