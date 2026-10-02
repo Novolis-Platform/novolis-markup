@@ -12,7 +12,7 @@ public class HtmlElement : IHtmlNode
 
     private readonly List<(string Name, string? Value)> _attributes = new();
     private readonly List<IHtmlNode> _children = new();
-    private readonly HashSet<string> _classes = new(StringComparer.Ordinal);
+    private readonly List<string> _classes = new();
 
     /// <summary>Creates an element with the given tag name.</summary>
     public HtmlElement(string tagName, HtmlRenderKind renderKind = HtmlRenderKind.Html)
@@ -66,6 +66,9 @@ public class HtmlElement : IHtmlNode
 
             foreach (var part in cssClass.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
             {
+                if (_classes.Exists(existing => string.Equals(existing, part, StringComparison.Ordinal)))
+                    continue;
+
                 _classes.Add(part);
             }
         }

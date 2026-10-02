@@ -39,6 +39,22 @@ public sealed class MermaidMarkdownHtmlRendererTests
     }
 
     [Test]
+    public async Task ToHtml_CanSkipMermaidAndKeepFenceAsCode()
+    {
+        const string markdown = """
+            ```mermaid
+            flowchart LR
+                A --> B
+            ```
+            """;
+
+        var html = MermaidMarkdownHtmlRenderer.ToHtml(markdown, renderMermaid: false);
+
+        await Assert.That(html).Contains("language-mermaid");
+        await Assert.That(html).DoesNotContain("data:image/svg+xml;base64,");
+    }
+
+    [Test]
     public async Task ToHtml_FallsBackToCodeWhenMermaidCannotRender()
     {
         const string markdown = """
@@ -51,6 +67,44 @@ public sealed class MermaidMarkdownHtmlRendererTests
 
         await Assert.That(html).Contains("language-mermaid");
         await Assert.That(html).Contains("definitely not valid mermaid");
+    }
+
+    [Test]
+    public async Task ToHtml_AcceptsInfoStringAfterFenceSpace()
+    {
+        const string markdown = """
+            ``` mermaid
+            flowchart LR
+                A --> B
+            ```
+
+            ``` csharp
+            var answer = 42;
+            ```
+            """;
+
+        var built = MermaidMarkdownHtmlRenderer.Build(markdown);
+
+        await Assert.That(built.Document).Contains("class=\"mermaid-diagram");
+        await Assert.That(built.Document).Contains("data:image/svg+xml;base64,");
+        await Assert.That(built.Document).Contains("language-csharp");
+        await Assert.That(built.Actions.Previews.Count).IsEqualTo(1);
+    }
+
+    [Test]
+    public async Task Build_RendersPresenceLedgerSpecWhenPresent()
+    {
+        const string path = @"C:\Users\frank\Downloads\Presence-Ledger-Spec.md";
+        if (!File.Exists(path))
+            return;
+
+        var markdown = await File.ReadAllTextAsync(path);
+        var built = MermaidMarkdownHtmlRenderer.Build(markdown, title: "Presence-Ledger-Spec.md");
+
+        await Assert.That(built.Document).Contains("<h1>Presence Ledger</h1>");
+        await Assert.That(built.Document).Contains("code-block-copy");
+        await Assert.That(built.Actions.Previews.Count).IsGreaterThanOrEqualTo(1);
+        await Assert.That(built.Actions.CodeBlocks.Count).IsGreaterThanOrEqualTo(1);
     }
 
     [Test]

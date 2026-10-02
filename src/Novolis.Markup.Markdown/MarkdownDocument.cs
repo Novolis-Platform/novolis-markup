@@ -40,7 +40,9 @@ public class MarkdownDocument() : IMarkdownDocument
     static readonly Regex OrderedItem = new(@"^(?<indent>\s*)\d+\.\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     static readonly Regex UnorderedItem = new(@"^(?<indent>\s*)([-*])\s+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
     static readonly Regex ThematicBreak = new(@"^\s{0,3}([-*_])\1{2,}\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
-    static readonly Regex FenceOpen = new(@"^\s{0,3}```([\w+-]*)\s*$", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+    static readonly Regex FenceOpen = new(
+        @"^\s{0,3}```(?:\s*([\w+-]+))?\s*$",
+        RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
     /// <summary>Parses a Markdown string into a document (Novolis subset: headings, paragraphs with inlines, lists, tables, fences, HR, quotes/callouts).</summary>
     public static IMarkdownDocument Parse(string markdown)
@@ -61,7 +63,7 @@ public class MarkdownDocument() : IMarkdownDocument
             var fence = FenceOpen.Match(lines[i]);
             if (fence.Success)
             {
-                var lang = fence.Groups[1].Value;
+                var lang = fence.Groups[1].Value.Trim();
                 i++;
                 var code = new StringBuilder();
                 while (i < lines.Length && !lines[i].TrimStart().StartsWith("```", StringComparison.Ordinal))

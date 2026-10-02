@@ -25,7 +25,7 @@ public static class MarkdownHtmlChrome
         ArgumentNullException.ThrowIfNull(actions);
         var href = actions.AddPreview(dataUri, caption);
         return HtmlMarkup.Div(div => div
-            .Class("media-preview", extraClass)
+            .Class(extraClass, "media-preview")
             .Child(HtmlMarkup.A(href, "Fullscreen").Class("media-preview-open"))
             .Img(dataUri, caption));
     }

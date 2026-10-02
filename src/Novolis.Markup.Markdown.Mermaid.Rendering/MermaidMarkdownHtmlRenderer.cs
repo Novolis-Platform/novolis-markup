@@ -13,14 +13,15 @@ public static class MermaidMarkdownHtmlRenderer
     public static string ToHtml(
         string markdown,
         MermaidRenderTheme theme = MermaidRenderTheme.StudioDark,
-        MarkdownHtmlActionSink? actions = null)
+        MarkdownHtmlActionSink? actions = null,
+        bool renderMermaid = true)
     {
         if (string.IsNullOrEmpty(markdown))
             return "<p></p>";
 
         return MarkdownToHtmlConverter.Convert(
             MarkdownDocument.Parse(markdown),
-            section => RenderSection(section, theme, actions),
+            renderMermaid ? section => RenderSection(section, theme, actions) : null,
             actions);
     }
 
@@ -38,10 +39,11 @@ public static class MermaidMarkdownHtmlRenderer
         MarkdownHtmlTheme htmlTheme = MarkdownHtmlTheme.StudioDark,
         MermaidRenderTheme mermaidTheme = MermaidRenderTheme.StudioDark,
         string? title = null,
-        string? sourceDirectory = null)
+        string? sourceDirectory = null,
+        bool renderMermaid = true)
     {
         var actions = new MarkdownHtmlActionSink { SourceDirectory = sourceDirectory };
-        var body = ToHtml(markdown, mermaidTheme, actions);
+        var body = ToHtml(markdown, mermaidTheme, actions, renderMermaid);
         return new MarkdownHtmlDocumentBuild(MarkdownHtmlDocument.Wrap(body, htmlTheme, title), actions);
     }
 
