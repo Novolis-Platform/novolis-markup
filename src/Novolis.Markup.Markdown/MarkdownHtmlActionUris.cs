@@ -7,16 +7,16 @@ public static class MarkdownHtmlActionUris
     public const string Scheme = "novolis-md";
 
     /// <summary>
-    /// <c>about:</c> actions navigate for real (so WebView2 raises Navigating)
-    /// without touching the network or an unregistered protocol.
+    /// HTTPS host used for copy/preview chrome. Navigation is cancelled and handled
+    /// by the host — unlike <c>about:</c>, a missed cancel cannot blank the document.
     /// </summary>
-    public const string AboutPrefix = "about:novolis-md/";
+    public const string HostPrefix = "https://novolis.md/";
 
     /// <summary>Builds a copy-action URI for a code-block index.</summary>
-    public static string Copy(int index) => $"{AboutPrefix}copy/{index}";
+    public static string Copy(int index) => $"{HostPrefix}copy/{index}";
 
     /// <summary>Builds a fullscreen-preview URI for a media index.</summary>
-    public static string Preview(int index) => $"{AboutPrefix}preview/{index}";
+    public static string Preview(int index) => $"{HostPrefix}preview/{index}";
 
     /// <summary>Tries to read a copy or preview index from a navigation URL.</summary>
     public static bool TryRead(string? url, out MarkdownHtmlActionKind kind, out int index)
@@ -55,7 +55,7 @@ public static class MarkdownHtmlActionUris
         if (string.IsNullOrWhiteSpace(text))
             return false;
 
-        var markers = new[] { AboutPrefix, "novolis-md://", "#novolis-md/", "https://novolis.md/" };
+        var markers = new[] { HostPrefix, "about:novolis-md/", "novolis-md://", "#novolis-md/" };
         foreach (var marker in markers)
         {
             var start = text.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
