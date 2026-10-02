@@ -18,6 +18,13 @@ public sealed class MarkdownHtmlActionUrisTests
             out var previewIndex)).IsTrue();
         await Assert.That(previewKind).IsEqualTo(MarkdownHtmlActionKind.Preview);
         await Assert.That(previewIndex).IsEqualTo(0);
+
+        await Assert.That(MarkdownHtmlActionUris.TryRead(
+            MarkdownHtmlActionUris.Preview(4),
+            out var aboutKind,
+            out var aboutIndex)).IsTrue();
+        await Assert.That(aboutKind).IsEqualTo(MarkdownHtmlActionKind.Preview);
+        await Assert.That(aboutIndex).IsEqualTo(4);
     }
 
     [Test]
