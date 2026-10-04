@@ -19,7 +19,7 @@
     <PackageVersion Include="SkiaSharp.NativeAssets.WebAssembly" Version="3.119.4" />
     <PackageVersion Include="SkiaSharp.NativeAssets.Win32" Version="3.119.4" />
     <PackageVersion Include="Svg.Skia" Version="4.9.1" />
-    <PackageVersion Include="TUnit" Version="1.72.4" />
+    <PackageVersion Include="TUnit" Version="1.72.16" />
     <PackageVersion Include="YamlDotNet" Version="16.3.0" />
 
   </ItemGroup>
