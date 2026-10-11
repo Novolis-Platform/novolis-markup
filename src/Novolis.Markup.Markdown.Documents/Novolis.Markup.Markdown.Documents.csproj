@@ -3,7 +3,7 @@
     <PackageId>Novolis.Markup.Markdown.Documents</PackageId>
     <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Markdown.Documents</RootNamespace>
-    <Description>Map Novolis.Markup.Markdown documents to Novolis.Documents PagedDocument and export PDF via Documents.Skia.</Description>
+    <Description>Map Novolis.Markup.Markdown documents to semantic Novolis.Documents sections and export PDF via Documents.Skia.</Description>
     <PackageTags>markdown;pdf;documents;skia;export;csharp;dotnet</PackageTags>
   </PropertyGroup>
   <ItemGroup>

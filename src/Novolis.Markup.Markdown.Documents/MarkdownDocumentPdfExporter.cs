@@ -12,14 +12,14 @@ public static class MarkdownDocumentPdfExporter
     {
         ArgumentNullException.ThrowIfNull(document);
         ArgumentException.ThrowIfNullOrWhiteSpace(outputPath);
-        DocumentPdf.Write(MarkdownPagedDocumentMapper.FromDocument(document, options), outputPath);
+        DocumentPdf.Write(MarkdownDocumentMapper.FromDocument(document, options), outputPath);
     }
 
     /// <summary>Maps a fluent Markdown document and returns PDF bytes.</summary>
     public static byte[] ExportToBytes(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(document);
-        return DocumentPdf.ToBytes(MarkdownPagedDocumentMapper.FromDocument(document, options));
+        return DocumentPdf.ToBytes(MarkdownDocumentMapper.FromDocument(document, options));
     }
 
     /// <summary>
@@ -38,9 +38,9 @@ public static class MarkdownDocumentPdfExporter
 
     /// <summary>Builds a semantic <see cref="Document"/> without writing PDF.</summary>
     public static Document ToDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null) =>
-        MarkdownPagedDocumentMapper.FromDocument(document, options);
+        MarkdownDocumentMapper.FromDocument(document, options);
 
     /// <summary>Builds a semantic <see cref="Document"/> from raw Markdown.</summary>
     public static Document ToDocument(string markdown, MarkdownPagedExportOptions? options = null) =>
-        MarkdownPagedDocumentMapper.FromMarkdown(markdown, options);
+        MarkdownDocumentMapper.FromMarkdown(markdown, options);
 }
