@@ -10,7 +10,7 @@ Programmatic construction of **Markdown** and **Mermaid** text without templates
 |---------|----------------|
 | `Novolis.Markup.Markdown` | Section-based GFM documents (headers, lists, tables, alerts, code blocks) and optional HTML export |
 | `Novolis.Markup.Markdown.Rendering` | Themed HTML documents / file export via Novolis Markdown |
-| `Novolis.Markup.Markdown.Documents` | Markdown → `PagedDocument` / PDF via Documents.Skia |
+| `Novolis.Markup.Markdown.Documents` | Markdown → semantic `Document` / PDF via Documents.Skia |
 | `Novolis.Markup.Mermaid` | Diagram builders (flowchart, sequence, class, state, ER, gantt, mindmap, C4, and more) emitting Mermaid source |
 
 UI hosts (`Novolis.Avalonia.Markdown` / `.Mermaid`, `Novolis.Maui.Markdown` / `.Mermaid`) live in **novolis-avalonia** and **novolis-maui**. Use `Novolis.Markup.Markdown.Documents` / `novolis-mdpdf` for PDF — not QuestPDF.

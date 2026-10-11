@@ -63,7 +63,7 @@ Programmatic Markdown, Mermaid, and manuscript tooling for .NET — migrated fro
 | `Novolis.Markup.Markdown` | Fluent GitHub-flavored Markdown document builder |
 | `Novolis.Markup.Markdown.Rendering` | Themed HTML export via Novolis Markdown |
 | `Novolis.Markup.Markdown.Mermaid.Rendering` | Fenced `mermaid` blocks → headless SVG in Markdown HTML |
-| `Novolis.Markup.Markdown.Documents` | Fluent Markdown → `PagedDocument` / PDF via Documents.Skia |
+| `Novolis.Markup.Markdown.Documents` | Fluent Markdown → semantic `Document` / PDF via Documents.Skia |
 | `Novolis.Markup.Mermaid` | Fluent Mermaid diagram syntax builder (flowchart, sequence, gantt, …) |
 | `Novolis.Markup.Mermaid.Rendering` | Headless Mermaid SVG/PNG export (`ToSvg` / `ToPng` on `IMermaidable`) |
 | `Novolis.Markup.Manuscript` | Chapter metadata, content catalog, diagnostics, book/reference PDF export |
