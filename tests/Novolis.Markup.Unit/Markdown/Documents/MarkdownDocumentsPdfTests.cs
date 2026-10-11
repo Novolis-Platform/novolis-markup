@@ -2,6 +2,7 @@ using Novolis.Documents;
 using Novolis.Markup.Markdown;
 using Novolis.Markup.Markdown.Documents;
 using TUnit.Core;
+using DocumentSection = Novolis.Documents.Section;
 
 namespace Novolis.Markup.Unit.Markdown.Documents;
 
@@ -33,7 +34,7 @@ public sealed class MarkdownDocumentsPdfTests
         await Assert.That(doc.Body.OfType<SceneBreakBlock>().Count()).IsEqualTo(1);
         await Assert.That(doc.Body.OfType<ParagraphBlock>().Any(p => p.Text.StartsWith('•'))).IsTrue();
         await Assert.That(doc.Body.OfType<ParagraphBlock>().Any(p => p.Text.StartsWith("1."))).IsTrue();
-        await Assert.That(doc.Sections.OfType<Section>().Any(section =>
+        await Assert.That(doc.Sections.OfType<DocumentSection>().Any(section =>
                 section.Contents.OfType<Heading>().Any(heading => heading.Value == "Duckville Harbor")))
             .IsTrue();
         await Assert.That(doc.Sections.OfType<TableSection>()).IsEmpty();
