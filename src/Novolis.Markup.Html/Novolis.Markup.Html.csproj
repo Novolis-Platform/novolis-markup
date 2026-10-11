@@ -3,12 +3,13 @@
     <PackageId>Novolis.Markup.Html</PackageId>
     <IsPackable>true</IsPackable>
     <RootNamespace>Novolis.Markup.Html</RootNamespace>
-    <Description>Fluent HTML, CSS, JavaScript (functions/classes), and SVG builders for .NET.</Description>
+    <Description>Fluent HTML, CSS, JavaScript (functions/classes), and typed SVG embedding for .NET.</Description>
     <PackageTags>html;css;javascript;svg;fluent;markup;novolis</PackageTags>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Novolis.Markup.Svg\Novolis.Markup.Svg.csproj" />
     <None Include="README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

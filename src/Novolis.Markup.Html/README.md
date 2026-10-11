@@ -6,7 +6,7 @@
 
 # Novolis.Markup.Html
 
-Fluent HTML, CSS, JavaScript (functions and classes), and SVG builders for .NET.
+Fluent HTML, CSS, JavaScript (functions and classes), and compatibility SVG embedding for .NET. Use `Novolis.Markup.Svg` for standalone typed SVG authoring.
 
 ## Install
 
@@ -52,6 +52,18 @@ var page = HtmlMarkup.Document(doc => doc
 File.WriteAllText("index.html", page.ToString());
 ```
 
+For typed standalone SVG documents, use `Novolis.Markup.Svg` directly or embed it with
+`SvgDocument`:
+
+```csharp
+using Novolis.Markup.Svg;
+
+var page = HtmlMarkup.Document(doc => doc
+    .WithBody(body => body.SvgDocument(svg => svg
+        .ViewBox(0, 0, 24, 24)
+        .Circle(12, 12, 10, circle => circle.Fill(SvgPaint.Color("#1a9b8e"))))));
+```
+
 ## Surfaces
 
 | API | Role |
@@ -60,7 +72,8 @@ File.WriteAllText("index.html", page.ToString());
 | `HtmlFragment` | Sibling nodes without a wrapper |
 | `Css.CssStylesheet` / `CssRule` | Common layout, flex/grid, type, color, border props |
 | `Js.JsScript` / `JsClass` | Function and class declarations (intentionally narrow) |
-| `Svg.SvgRoot` | SVG shapes, text, gradients, groups |
+| `Svg.SvgRoot` | Compatibility SVG shapes, text, gradients, groups |
+| `HtmlElement.SvgDocument` | Embeds a typed `Novolis.Markup.Svg.SvgDocument` |
 
 ## Factories
 

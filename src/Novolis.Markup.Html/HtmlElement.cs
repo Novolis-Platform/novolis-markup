@@ -486,6 +486,21 @@ public class HtmlElement : IHtmlNode
         return Child(svg);
     }
 
+    /// <summary>Appends a standalone typed SVG document.</summary>
+    public HtmlElement SvgDocument(Action<Novolis.Markup.Svg.SvgDocument>? configure = null)
+    {
+        var document = new Novolis.Markup.Svg.SvgDocument();
+        configure?.Invoke(document);
+        return Raw(document.ToString());
+    }
+
+    /// <summary>Appends a standalone typed SVG document.</summary>
+    public HtmlElement SvgDocument(Novolis.Markup.Svg.SvgDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
+        return Raw(document.ToString());
+    }
+
     /// <inheritdoc />
     public void WriteTo(TextWriter writer)
     {

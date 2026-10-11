@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>Novolis.Markup.Svg</PackageId>
+    <RootNamespace>Novolis.Markup.Svg</RootNamespace>
+    <Description>Type-safe, fluent SVG document and shape builders for .NET.</Description>
+    <PackageTags>svg;markup;graphics;fluent;novolis</PackageTags>
+    <IsPackable>true</IsPackable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>
