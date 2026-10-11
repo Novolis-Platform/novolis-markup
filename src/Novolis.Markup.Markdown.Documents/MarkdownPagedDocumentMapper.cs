@@ -41,6 +41,7 @@ public static class MarkdownPagedDocumentMapper
         options ??= new MarkdownPagedExportOptions();
         var title = options.Title ?? InferTitle(document) ?? "Document";
         var body = MapBody(document, options);
+        var semanticSections = body.SelectMany(ToSemanticSections).ToArray();
 
         var builder = Document.Create(title)
             .Meta(meta => meta
@@ -72,12 +73,12 @@ public static class MarkdownPagedDocumentMapper
             .Typography(options.Typography)
             .Toc(options.IncludeToc);
 
+        foreach (var section in semanticSections)
+            builder.Add(section);
+        builder.CompatibilityBody(body);
+
         builder.Body(bodyBuilder =>
         {
-            bodyBuilder.Content(content => content
-                .AddRange(body)
-                .Toc(options.IncludeToc));
-
             if (options.IncludeCover || options.First is not null)
             {
                 bodyBuilder.First(first =>
@@ -114,6 +115,166 @@ public static class MarkdownPagedDocumentMapper
 
         return builder.Build();
     }
+
+    static IEnumerable<ISection> ToSemanticSections(IBlock block)
+    {
+        switch (block)
+        {
+            case DocHeading heading:
+                yield return new Section(
+                    [new Heading(heading.Text, System.Math.Clamp(heading.Level, 1, 4))],
+                    new SectionLayout { KeepWithNext = true });
+                yield break;
+            case DocParagraph paragraph:
+                yield return new Section([new Text(paragraph.Text)]);
+                yield break;
+            case TableBlock table:
+                yield return ToSemanticTable(table);
+                yield break;
+            case ColumnsBlock columns:
+                yield return ToSemanticColumns(columns);
+                yield break;
+            case ImageBlock image when TryToSemanticImage(image, out var semanticImage):
+                yield return new Section([semanticImage]);
+                yield break;
+            case CodeBlock code:
+                yield return new Section(
+                    [new Code(
+                        string.Join(
+                            Environment.NewLine,
+                            code.ResolveLines().Select(static line =>
+                                string.Concat(line.Spans.Select(static span => span.Text)))) )]);
+                yield break;
+            case TextBoxBlock box:
+                yield return new Box(
+                    box.Lines.Select(static line => (IContent)new Text(line)))
+                {
+                    Background = box.Background,
+                    BorderColor = box.BorderColor,
+                };
+                yield break;
+            case SceneBreakBlock scene:
+                yield return new Section([new Rule()]);
+                yield break;
+            case LineBreakBlock:
+                yield return new Section([new Spacer(8f)]);
+                yield break;
+            case PageBreakBlock:
+                yield return new PageBreakSection();
+                yield break;
+            case BlankPageBlock:
+                yield return new PageBreakSection();
+                yield return new PageBreakSection();
+                yield break;
+            case CoverBlock or TocBlock:
+                yield break;
+        }
+    }
+
+    static IContent? ToSemanticContent(IBlock block) =>
+        block switch
+        {
+            DocHeading heading => new Heading(heading.Text, System.Math.Clamp(heading.Level, 1, 4)),
+            DocParagraph paragraph => new Text(paragraph.Text),
+            TableBlock table => ToSemanticTable(table),
+            ColumnsBlock columns => ToSemanticColumns(columns),
+            ImageBlock image when TryToSemanticImage(image, out var semanticImage) => semanticImage,
+            CodeBlock code => new Code(
+                string.Join(
+                    Environment.NewLine,
+                    code.ResolveLines().Select(static line =>
+                        string.Concat(line.Spans.Select(static span => span.Text))))),
+            TextBoxBlock box => new Box(
+                box.Lines.Select(static line => (IContent)new Text(line)))
+            {
+                Background = box.Background,
+                BorderColor = box.BorderColor,
+            },
+            SceneBreakBlock => new Rule(),
+            _ => null,
+        };
+
+    static ColumnsSection ToSemanticColumns(ColumnsBlock columns)
+    {
+        var result = new List<Column>();
+        for (var index = 0; index < columns.Columns.Count; index++)
+        {
+            var contents = columns.Columns[index]
+                .Select(ToSemanticContent)
+                .Where(static content => content is not null)
+                .Cast<IContent>()
+                .ToArray();
+            var width = columns.Fractions is { Count: > 0 } fractions
+                && index < fractions.Count
+                ? new ColumnWidth.Weight(System.Math.Max(0.01f, fractions[index]))
+                : new ColumnWidth.Weight(1f);
+            result.Add(new Column(contents, width));
+        }
+
+        return new ColumnsSection(result, columns.GapPt);
+    }
+
+    static TableSection ToSemanticTable(TableBlock table)
+    {
+        var count = table.Headers.Count;
+        count = System.Math.Max(count, table.Rows.Select(static row => row.Count).DefaultIfEmpty().Max());
+        var columns = Enumerable.Range(0, count)
+            .Select(index => new TableColumn(
+                new ColumnWidth.Weight(
+                    table.ColumnWidths is { Count: > 0 } widths && index < widths.Count
+                        ? System.Math.Max(0.01f, widths[index])
+                        : 1f),
+                table.ColumnAlignments is { Count: > 0 } alignments && index < alignments.Count
+                    ? ToAlignment(alignments[index])
+                    : HorizontalAlignment.Left))
+            .ToArray();
+        var rows = table.Rows.Select(row => new TableRow(
+            Enumerable.Range(0, count)
+                .Select(index => new TableCell(index < row.Count ? row[index] : string.Empty))))
+            .ToArray();
+        var header = table.Headers.Count == 0
+            ? null
+            : new TableRow(
+                Enumerable.Range(0, count)
+                    .Select(index => new TableCell(
+                        index < table.Headers.Count ? table.Headers[index] : string.Empty)));
+        return new TableSection(
+            columns,
+            rows,
+            new TableOptions
+            {
+                Header = header,
+                ShowHeader = table.ShowHeader && header is not null,
+                RepeatHeader = table.RepeatHeaderOnPageBreak,
+                HeaderBackground = table.HeaderBackground,
+                RuleStyle = table.RuleStyle,
+            });
+    }
+
+    static bool TryToSemanticImage(ImageBlock image, out Image semanticImage)
+    {
+        if (image.Data is { Length: > 0 } data)
+        {
+            semanticImage = new Image(data, image.WidthPt, image.HeightPt);
+            return true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(image.Path))
+        {
+            semanticImage = new Image(image.Path, image.WidthPt, image.HeightPt);
+            return true;
+        }
+
+        semanticImage = null!;
+        return false;
+    }
+
+    static HorizontalAlignment ToAlignment(CellAlign alignment) => alignment switch
+    {
+        CellAlign.Center => HorizontalAlignment.Center,
+        CellAlign.Right => HorizontalAlignment.Right,
+        _ => HorizontalAlignment.Left,
+    };
 
     /// <summary>
     /// Maps raw Markdown via <see cref="MarkdownDocument.Parse"/> (Novolis Markdown, not Markdig).
