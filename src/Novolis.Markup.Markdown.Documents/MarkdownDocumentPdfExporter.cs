@@ -36,11 +36,11 @@ public static class MarkdownDocumentPdfExporter
     public static byte[] ExportToBytes(string markdown, MarkdownPagedExportOptions? options = null) =>
         ExportToBytes(MarkdownDocument.Parse(markdown ?? string.Empty), options);
 
-    /// <summary>Builds a <see cref="PagedDocument"/> without writing PDF.</summary>
-    public static PagedDocument ToPagedDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null) =>
+    /// <summary>Builds a semantic <see cref="Document"/> without writing PDF.</summary>
+    public static Document ToDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null) =>
         MarkdownPagedDocumentMapper.FromDocument(document, options);
 
-    /// <summary>Builds a <see cref="PagedDocument"/> from raw Markdown via <see cref="MarkdownDocument.Parse"/>.</summary>
-    public static PagedDocument ToPagedDocument(string markdown, MarkdownPagedExportOptions? options = null) =>
+    /// <summary>Builds a semantic <see cref="Document"/> from raw Markdown.</summary>
+    public static Document ToDocument(string markdown, MarkdownPagedExportOptions? options = null) =>
         MarkdownPagedDocumentMapper.FromMarkdown(markdown, options);
 }

@@ -3,7 +3,7 @@ using Novolis.Math.Measure;
 
 namespace Novolis.Markup.Markdown.Documents;
 
-/// <summary>Options for mapping Markdown into a <see cref="PagedDocument"/> / PDF.</summary>
+/// <summary>Options for mapping Markdown into a semantic <see cref="Document"/> / PDF.</summary>
 public sealed class MarkdownPagedExportOptions
 {
     /// <summary>Document title (first page + chrome).</summary>
@@ -38,6 +38,9 @@ public sealed class MarkdownPagedExportOptions
 
     /// <summary>Page margins.</summary>
     public Thickness Margin { get; init; } = TrimPresets.DefaultMargin;
+
+    /// <summary>Optional watermark applied after pagination.</summary>
+    public Watermark? Watermark { get; init; }
 
     /// <summary>Typography for body flow.</summary>
     public Typography Typography { get; init; } = new();

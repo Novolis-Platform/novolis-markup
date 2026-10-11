@@ -8,7 +8,7 @@ using DocParagraph = Novolis.Documents.ParagraphBlock;
 
 namespace Novolis.Markup.Markdown.Documents;
 
-/// <summary>Maps <see cref="IMarkdownDocument"/> into a <see cref="PagedDocument"/>.</summary>
+/// <summary>Maps <see cref="IMarkdownDocument"/> into a semantic <see cref="Document"/>.</summary>
 public static class MarkdownPagedDocumentMapper
 {
     static readonly Regex CalloutRegex = new(
@@ -34,61 +34,92 @@ public static class MarkdownPagedDocumentMapper
     static readonly DocumentColor TipFill = DocumentColor.Parse("#e8f8f5");
     static readonly DocumentColor BodyInk = DocumentColor.Parse("#1a1a1a");
 
-    /// <summary>Maps a fluent Markdown document to a paged document model.</summary>
-    public static PagedDocument FromDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
+    /// <summary>Maps a fluent Markdown document to a semantic section model.</summary>
+    public static Document FromDocument(IMarkdownDocument document, MarkdownPagedExportOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         options ??= new MarkdownPagedExportOptions();
         var title = options.Title ?? InferTitle(document) ?? "Document";
         var body = MapBody(document, options);
 
-        return new PagedDocument
+        var builder = Document.Create(title)
+            .Meta(meta => meta
+                .Subtitle(options.Subtitle)
+                .Series(options.Series)
+                .Author(options.Author)
+                .Rights(options.Rights))
+            .Page(page =>
+            {
+                page.TrimSize(options.Trim).Margins(options.Margin);
+                if (!string.IsNullOrWhiteSpace(options.HeaderTemplate))
+                {
+                    page.Header(header => header
+                        .Template(options.HeaderTemplate)
+                        .IncludeBody()
+                        .UseChapterTitle(options.UseChapterTitleHeader));
+                }
+
+                if (!string.IsNullOrWhiteSpace(options.FooterTemplate))
+                {
+                    page.Footer(footer => footer
+                        .Template(options.FooterTemplate)
+                        .IncludeBody()
+                        .IncludeFirstPage(options.FooterOnFirstPage)
+                        .IncludeToc(options.FooterOnToc)
+                        .IncludeLastPage(options.FooterOnLastPage));
+                }
+            })
+            .Typography(options.Typography)
+            .Toc(options.IncludeToc);
+
+        builder.Body(bodyBuilder =>
         {
-            Meta = new DocumentMeta
+            bodyBuilder.Content(content => content
+                .AddRange(body)
+                .Toc(options.IncludeToc));
+
+            if (options.IncludeCover || options.First is not null)
             {
-                Title = title,
-                Subtitle = options.Subtitle,
-                Series = options.Series,
-                Author = options.Author,
-                Rights = options.Rights,
-            },
-            Setup = new PageSetup
+                bodyBuilder.First(first =>
+                {
+                    if (options.First is { } configured)
+                    {
+                        first.Title(configured.Title)
+                            .Subtitle(configured.Subtitle)
+                            .Series(configured.Series)
+                            .Author(configured.Author)
+                            .Rights(configured.Rights)
+                            .Lines(configured.Lines.ToArray())
+                            .Blocks(content => content.AddRange(configured.Blocks));
+                    }
+                });
+            }
+
+            if (options.Last is { } last)
             {
-                Trim = options.Trim,
-                Margin = options.Margin,
-            },
-            Typography = options.Typography,
-            IncludeCover = options.IncludeCover,
-            IncludeToc = options.IncludeToc,
-            First = options.First,
-            Last = options.Last,
-            Header = string.IsNullOrWhiteSpace(options.HeaderTemplate)
-                ? null
-                : new Header
-                {
-                    Template = options.HeaderTemplate,
-                    IncludeBody = true,
-                    UseChapterTitle = options.UseChapterTitleHeader,
-                },
-            Footer = string.IsNullOrWhiteSpace(options.FooterTemplate)
-                ? null
-                : new Footer
-                {
-                    Template = options.FooterTemplate,
-                    IncludeBody = true,
-                    IncludeFirstPage = options.FooterOnFirstPage,
-                    IncludeToc = options.FooterOnToc,
-                    IncludeLastPage = options.FooterOnLastPage,
-                },
-            Body = body,
-        };
+                bodyBuilder.Last(closing => closing
+                    .Title(last.Title)
+                    .Lines(last.Lines.ToArray())
+                    .Blocks(content => content.AddRange(last.Blocks)));
+            }
+        });
+
+        if (options.Watermark is { } watermark)
+            builder.Watermark(mark => mark
+                .Text(watermark.Text)
+                .Color(watermark.Color)
+                .Opacity(watermark.Opacity)
+                .Rotation(watermark.RotationDegrees)
+                .On(watermark.Pages));
+
+        return builder.Build();
     }
 
     /// <summary>
     /// Maps raw Markdown via <see cref="MarkdownDocument.Parse"/> (Novolis Markdown, not Markdig).
     /// Prefer <see cref="FromDocument"/> for fluent / faithful documents.
     /// </summary>
-    public static PagedDocument FromMarkdown(string markdown, MarkdownPagedExportOptions? options = null) =>
+    public static Document FromMarkdown(string markdown, MarkdownPagedExportOptions? options = null) =>
         FromDocument(MarkdownDocument.Parse(markdown ?? string.Empty), options);
 
     static IReadOnlyList<DocIBlock> MapBody(IMarkdownDocument document, MarkdownPagedExportOptions options)
