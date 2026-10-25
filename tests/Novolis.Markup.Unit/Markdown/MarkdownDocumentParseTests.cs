@@ -105,6 +105,94 @@ public sealed class MarkdownDocumentParseTests
     }
 
     [Test]
+    public async Task Parse_FrontMatter_IsFieldsNotBody()
+    {
+        var md = """
+            ---
+            Title: Harbor Notes
+            Tags: freight, fog
+            Author: Novolis
+            ---
+
+            # Heading
+
+            The ship sailed.
+            """;
+        var doc = MarkdownDocument.Parse(md);
+
+        await Assert.That(doc.FrontMatter.Title).IsEqualTo("Harbor Notes");
+        await Assert.That(doc.FrontMatter.Get("Author")).IsEqualTo("Novolis");
+        await Assert.That(doc.FrontMatter.Tags.Count).IsEqualTo(2);
+        await Assert.That(doc.FrontMatter.Tags[0]).IsEqualTo("freight");
+        await Assert.That(doc.FrontMatter.Tags[1]).IsEqualTo("fog");
+        await Assert.That(doc.OfType<IMarkdownHorizontalRule>().Count()).IsEqualTo(0);
+        await Assert.That(doc.OfType<IMarkdownHeader>().Count()).IsEqualTo(1);
+
+        var html = doc.ToHtml();
+        await Assert.That(html).Contains("Heading");
+        await Assert.That(html.Contains("Harbor Notes", StringComparison.Ordinal)).IsFalse();
+        await Assert.That(html.Contains("freight", StringComparison.Ordinal)).IsFalse();
+
+        var again = MarkdownDocument.Parse(doc.ToString());
+        await Assert.That(again.FrontMatter.Title).IsEqualTo("Harbor Notes");
+        await Assert.That(again.FrontMatter.Tags[1]).IsEqualTo("fog");
+        await Assert.That(again.ToString()).Contains("# Heading");
+    }
+
+    [Test]
+    public async Task Parse_FrontMatter_ListAndQuotedTitle()
+    {
+        var md = """
+            ---
+            Title: "Hello: World"
+            Tags:
+              - alpha
+              - beta
+            ---
+
+            Body
+            """;
+        var doc = MarkdownDocument.Parse(md);
+        await Assert.That(doc.FrontMatter.Title).IsEqualTo("Hello: World");
+        await Assert.That(doc.FrontMatter.Tags.Count).IsEqualTo(2);
+        await Assert.That(doc.FrontMatter.Tags[0]).IsEqualTo("alpha");
+        await Assert.That(doc.FrontMatter.Tags[1]).IsEqualTo("beta");
+        await Assert.That(doc.ToString()).Contains("Body");
+    }
+
+    [Test]
+    public async Task Parse_LeadingThematicBreak_IsNotFrontMatter()
+    {
+        var doc = MarkdownDocument.Parse("---\n\nAfter.");
+        await Assert.That(doc.FrontMatter.IsEmpty).IsTrue();
+        await Assert.That(doc.OfType<IMarkdownHorizontalRule>().Count()).IsEqualTo(1);
+        await Assert.That(doc.ToString()).Contains("After.");
+    }
+
+    [Test]
+    public async Task Parse_InvalidFrontMatter_StaysThematicBreak()
+    {
+        var doc = MarkdownDocument.Parse("---\nnot a field\n---\n\n# Heading");
+        await Assert.That(doc.FrontMatter.IsEmpty).IsTrue();
+        await Assert.That(doc.OfType<IMarkdownHorizontalRule>().Count()).IsEqualTo(2);
+        await Assert.That(doc.ToString()).Contains("# Heading");
+    }
+
+    [Test]
+    public async Task WithFrontMatter_RoundTripsFields()
+    {
+        var doc = new MarkdownDocument()
+            .WithFrontMatter("Title", "Harbor")
+            .WithFrontMatter("Tags", "freight, fog")
+            .WithHeader("Harbor");
+
+        var again = MarkdownDocument.Parse(doc.ToString());
+        await Assert.That(again.FrontMatter.Title).IsEqualTo("Harbor");
+        await Assert.That(again.FrontMatter.Tags[0]).IsEqualTo("freight");
+        await Assert.That(again.FrontMatter.Fields.Count).IsEqualTo(2);
+    }
+
+    [Test]
     public async Task With_MultipleSections_ReturnsSameDocument()
     {
         var doc = new MarkdownDocument();

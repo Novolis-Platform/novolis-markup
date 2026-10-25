@@ -1,3 +1,4 @@
+using Novolis.Markup.Markdown;
 using Novolis.Markup.Markdown.Rendering;
 
 namespace Novolis.Markup.Markdown.Rendering.Tests;
@@ -42,6 +43,22 @@ public class NovolisMarkdownRendererTests
         await Assert.That(html).Contains("color-scheme: dark");
         await Assert.That(html).Contains("background: #0d1117");
         await Assert.That(html).Contains("name=\"color-scheme\"");
+    }
+
+    [Test]
+    public async Task FromDocument_UsesFrontMatterTitle()
+    {
+        var doc = MarkdownDocument.Parse("""
+            ---
+            Title: Harbor Notes
+            ---
+
+            # Heading
+            """);
+        var html = MarkdownHtmlDocument.FromDocument(doc);
+        await Assert.That(html).Contains("<title>Harbor Notes</title>");
+        await Assert.That(html).Contains("Heading");
+        await Assert.That(doc.ToHtml().Contains("Harbor Notes", StringComparison.Ordinal)).IsFalse();
     }
 
     [Test]

@@ -19,6 +19,31 @@ public sealed class MarkdownDocumentsPdfTests
         .WithOrderedList("Check the manifest", "Cast off at first light");
 
     [Test]
+    public async Task Mapper_reads_front_matter_title_author_and_tags()
+    {
+        var md = """
+            ---
+            Title: Harbor Notes
+            Author: Novolis
+            Tags: freight, fog
+            Date: 2026-10-25
+            ---
+
+            # Chapter
+
+            Body.
+            """;
+
+        var doc = MarkdownPagedDocumentMapper.FromMarkdown(md);
+        await Assert.That(doc.Meta.Title).IsEqualTo("Harbor Notes");
+        await Assert.That(doc.Meta.Author).IsEqualTo("Novolis");
+        await Assert.That(doc.Meta.Keywords.Count).IsEqualTo(2);
+        await Assert.That(doc.Meta.Keywords[0]).IsEqualTo("freight");
+        await Assert.That(doc.Meta.Keywords[1]).IsEqualTo("fog");
+        await Assert.That(doc.Meta.Date).IsEqualTo(new DateOnly(2026, 10, 25));
+    }
+
+    [Test]
     public async Task Mapper_maps_headings_scene_break_and_lists()
     {
         var doc = MarkdownPagedDocumentMapper.FromDocument(SampleDocument(), new MarkdownPagedExportOptions

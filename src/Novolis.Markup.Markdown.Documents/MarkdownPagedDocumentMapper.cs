@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Novolis.Documents;
@@ -39,16 +40,30 @@ public static class MarkdownPagedDocumentMapper
     {
         ArgumentNullException.ThrowIfNull(document);
         options ??= new MarkdownPagedExportOptions();
-        var title = options.Title ?? InferTitle(document) ?? "Document";
+        var frontMatter = document.FrontMatter;
+        var title = FirstNonEmpty(options.Title, frontMatter.Title) ?? InferTitle(document) ?? "Document";
         var body = MapBody(document, options);
         var semanticSections = body.SelectMany(ToSemanticSections).ToArray();
 
         var builder = Document.Create(title)
-            .Meta(meta => meta
-                .Subtitle(options.Subtitle)
-                .Series(options.Series)
-                .Author(options.Author)
-                .Rights(options.Rights))
+            .Meta(meta =>
+            {
+                meta.Subtitle(FirstNonEmpty(options.Subtitle, frontMatter.Get("Subtitle")))
+                    .Series(FirstNonEmpty(options.Series, frontMatter.Get("Series")))
+                    .Author(FirstNonEmpty(options.Author, frontMatter.Get("Author")))
+                    .Rights(FirstNonEmpty(options.Rights, frontMatter.Get("Rights")))
+                    .Contributors(frontMatter.Get("Contributors"))
+                    .Publisher(frontMatter.Get("Publisher"))
+                    .Subject(frontMatter.Get("Subject"))
+                    .Description(frontMatter.Get("Description"))
+                    .Identifier(frontMatter.Get("Identifier"))
+                    .Language(frontMatter.Get("Language"))
+                    .Version(frontMatter.Get("Version"));
+                if (frontMatter.Tags.Count > 0)
+                    meta.Keywords(frontMatter.Tags.ToArray());
+                if (DateOnly.TryParse(frontMatter.Get("Date"), CultureInfo.InvariantCulture, out var date))
+                    meta.Date(date);
+            })
             .Page(page =>
             {
                 page.TrimSize(options.Trim).Margins(options.Margin);
@@ -640,6 +655,9 @@ public static class MarkdownPagedDocumentMapper
             RepeatHeaderOnPageBreak = true,
         });
     }
+
+    static string? FirstNonEmpty(string? preferred, string? fallback) =>
+        !string.IsNullOrWhiteSpace(preferred) ? preferred : fallback;
 
     static string? InferTitle(IMarkdownDocument document)
     {

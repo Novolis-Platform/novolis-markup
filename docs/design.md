@@ -19,8 +19,9 @@ There is no shared runtime dependency between Markdown and Mermaid; reference on
 
 ## Markdown model
 
-- **`IMarkdownDocument`** — ordered collection of **`IMarkdownSection`** instances.
-- **`MarkdownDocument`** — mutable builder with `With(...)` chaining and `Parse` for simple imports.
+- **`IMarkdownDocument`** — ordered collection of **`IMarkdownSection`** instances, plus a **`MarkdownFrontMatter`** block.
+- **`MarkdownFrontMatter`** — YAML-style front matter between opening and closing `---` fences (`Title`, `Tags`, and any other `Key: value` field). `Parse` reads it; `ToString` writes it back. It is not a body section.
+- **`MarkdownDocument`** — mutable builder with `With(...)` / `WithFrontMatter(...)` chaining and `Parse` for simple imports.
 - **Extension methods** on `IMarkdownDocument` — convenience `WithHeader`, `WithTable<T>`, etc.
 - **`EnumerableExtensions.ToMarkdownTable<T>`** — reflects public properties into pipe tables.
 

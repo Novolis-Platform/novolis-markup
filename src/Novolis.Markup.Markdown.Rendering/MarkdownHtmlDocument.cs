@@ -57,6 +57,7 @@ public static class MarkdownHtmlDocument
         string? title = null)
     {
         ArgumentNullException.ThrowIfNull(document);
-        return Wrap(MarkdownToHtmlConverter.Convert(document), theme, title);
+        var resolvedTitle = string.IsNullOrWhiteSpace(title) ? document.FrontMatter.Title : title;
+        return Wrap(MarkdownToHtmlConverter.Convert(document), theme, resolvedTitle);
     }
 }

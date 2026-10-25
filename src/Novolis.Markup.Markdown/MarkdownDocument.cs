@@ -10,6 +10,9 @@ public class MarkdownDocument() : IMarkdownDocument
 {
     private readonly SortedList<int, IMarkdownSection> _sections = new();
 
+    /// <summary>Front matter. Empty until <see cref="WithFrontMatter(MarkdownFrontMatter?)"/> or <see cref="Parse"/> reads one.</summary>
+    public MarkdownFrontMatter FrontMatter { get; private set; } = MarkdownFrontMatter.Empty;
+
     /// <summary>Gets Enumerator</summary>
     public IMarkdownSection this[int index] => _sections[index];
 
@@ -18,7 +21,31 @@ public class MarkdownDocument() : IMarkdownDocument
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <summary>ToString operation.</summary>
-    public override string ToString() => string.Join(IMarkdownSection.NewLine, _sections.Values.Select(x => x.ToString())) + IMarkdownSection.NewLine;
+    public override string ToString()
+    {
+        var body = string.Join(IMarkdownSection.NewLine, _sections.Values.Select(static x => x.ToString()));
+        if (FrontMatter.IsEmpty)
+            return body + IMarkdownSection.NewLine;
+
+        if (_sections.Count == 0)
+            return FrontMatter.ToMarkdown();
+
+        return FrontMatter.ToMarkdown() + "\n" + body + IMarkdownSection.NewLine;
+    }
+
+    /// <summary>Replaces the front matter.</summary>
+    public IMarkdownDocument WithFrontMatter(MarkdownFrontMatter? frontMatter)
+    {
+        FrontMatter = frontMatter ?? MarkdownFrontMatter.Empty;
+        return this;
+    }
+
+    /// <summary>Sets one front matter field, keeping the other fields.</summary>
+    public IMarkdownDocument WithFrontMatter(string key, string? value)
+    {
+        FrontMatter = FrontMatter.With(key, value);
+        return this;
+    }
 
     /// <summary>With operation.</summary>
     public IMarkdownDocument With(IMarkdownSection section)
@@ -44,13 +71,20 @@ public class MarkdownDocument() : IMarkdownDocument
         @"^\s{0,3}```(?:\s*([\w+-]+))?\s*$",
         RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-    /// <summary>Parses a Markdown string into a document (Novolis subset: headings, paragraphs with inlines, lists, tables, fences, HR, quotes/callouts).</summary>
+    /// <summary>Parses a Markdown string into a document (front matter, headings, paragraphs with inlines, lists, tables, fences, HR, quotes/callouts).</summary>
     public static IMarkdownDocument Parse(string markdown)
     {
         var document = new MarkdownDocument();
-        var text = (markdown ?? string.Empty).Replace("\r\n", "\n");
+        var text = (markdown ?? string.Empty).Replace("\r\n", "\n").Replace("\r", "\n");
+        if (text.Length > 0 && text[0] == '\uFEFF')
+            text = text[1..];
         var lines = text.Split('\n');
         var i = 0;
+        if (MarkdownFrontMatter.TryParse(lines, i, out var frontMatter, out var afterFrontMatter))
+        {
+            document.WithFrontMatter(frontMatter);
+            i = afterFrontMatter;
+        }
 
         while (i < lines.Length)
         {
